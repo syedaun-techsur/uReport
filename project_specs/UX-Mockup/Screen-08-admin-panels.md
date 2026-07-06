@@ -1,0 +1,228 @@
+# Screen-08: Admin Panel Screens
+## Routes: `/admin/**`  |  User Stories: US-6.1–US-6.6
+
+**Purpose:** Configuration screens for categories, departments, substatuses, templates, users, and API keys.
+
+---
+
+## Admin Layout Shell
+
+All admin screens share:
+
+```
+┌─────────────────┬────────────────────────────────────────────────────────┐
+│  🏛 Admin       │  [Breadcrumb: Admin > Section Name]                     │
+│  [admin badge]  ├────────────────────────────────────────────────────────│
+│                 │  PAGE CONTENT                                           │
+│  📂 Categories  │                                                         │
+│  🏢 Departments │                                                         │
+│  🏷 Substatuses │                                                         │
+│  📝 Templates   │                                                         │
+│  👥 Users       │                                                         │
+│  🔑 API Keys    │                                                         │
+│                 │                                                         │
+│  ── Staff ──   │                                                         │
+│  📋 Tickets     │                                                         │
+│  👤 Account     │                                                         │
+└─────────────────┴─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Admin List Page Template (all admin sections follow this pattern)
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  [Section Name]                             [+ Create New]     │
+├────────────────────────────────────────────────────────────────┤
+│  🔍 Search...                                                  │
+├────────────────────────────────────────────────────────────────┤
+│  Name            [Column 2]   [Column 3]  Status   Actions    │
+├────────────────────────────────────────────────────────────────┤
+│  Item A          ...          ...         ✅ Active  [Edit][⊘] │
+│  Item B          ...          ...         ✅ Active  [Edit][⊘] │
+│  Item C (dim)    ...          ...         ○ Inactive [Edit][↺] │
+└────────────────────────────────────────────────────────────────┘
+```
+
+- Active items shown at full opacity; inactive items dimmed (50% opacity)
+- Edit → opens drawer form on the right
+- ⊘ Deactivate → confirmation dialog (warns if open tickets/linked records)
+- ↺ Reactivate → immediate, no confirmation needed
+
+---
+
+## Admin Categories Screen (`/admin/categories`)
+
+### Create/Edit Drawer
+
+```
+┌─────────────────────────────────────────────────────────┐  ←right side
+│  New Category                                      [×]  │
+├─────────────────────────────────────────────────────────┤
+│  Name *                                                 │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │ Holiday Light Removal Request                   │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  Description                                            │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │                                                 │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  Icon  [🔦 sparkles ▾]          Color  [#3B82F6 ■]     │
+│                                                         │
+│  Department *                                           │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │ Public Works                                  ▾ │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  Open311 service_code *                                 │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │ HLREMOVAL                                       │   │
+│  └─────────────────────────────────────────────────┘   │
+│  e.g. POTHOLE — uppercase letters and underscores only  │  ← hint
+│                                                         │
+│  Anonymous allowed    [●─────]  (ON)                   │
+│  Active               [●─────]  (ON)                   │
+│                                                         │
+│  ┌── Preview ──────────────────────────────────────┐   │
+│  │  🔦 Holiday Light Removal Request               │   │  ← live preview
+│  │  Routed to: Public Works                        │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+│  [Cancel]                              [Save Category]  │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Admin Substatuses Screen (`/admin/substatuses`)
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  Substatuses                                    [+ Create New] │
+├────────────────────────────────────────────────────────────────┤
+│  ┌── Open ─────────────────────────────────────────────────┐  │
+│  │  ⠿ Awaiting Triage        (active)  [Edit] [Deactivate] │  │  ← drag handle
+│  │  ⠿ Needs Investigation    (active)  [Edit] [Deactivate] │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌── In Progress ──────────────────────────────────────────┐  │
+│  │  ⠿ Crew Scheduled         (active)  [Edit] [Deactivate] │  │
+│  │  ⠿ Awaiting Parts         (active)  [Edit] [Deactivate] │  │
+│  │  ⠿ Work Begun             (active)  [Edit] [Deactivate] │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌── Closed ───────────────────────────────────────────────┐  │
+│  │  ⠿ Resolved - Confirmed   (active)  [Edit] [Deactivate] │  │
+│  │  ⠿ Duplicate Report       (active)  [Edit] [Deactivate] │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────┘
+```
+
+Drag-to-reorder within each group. Reorder sends `PATCH /api/admin/substatuses/reorder`.
+
+---
+
+## Admin Users Screen (`/admin/users`)
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│  User Accounts                             [+ Create Account]  │
+├────────────────────────────────────────────────────────────────┤
+│  Username       Email              Role    Dept     Status     │
+├────────────────────────────────────────────────────────────────┤
+│  d.kowalski     d.k@city.gov       Staff   Pub Wks  ✅ Active  │
+│  r.osei         r.o@city.gov       Admin   —        ✅ Active  │
+│  j.smith (dim)  j.s@city.gov       Staff   Parks    ○ Inactive │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Create User Drawer fields:**
+- Username (required, alphanumeric + _ -)
+- Email (required, valid email)
+- Initial Password (required, meets policy: ≥12 chars, uppercase, digit)
+- Role: Staff / Admin (radio)
+- Department (optional dropdown)
+
+**Row actions:**
+- Edit: change email, role, department (not username)
+- Deactivate: `active = false`; sessions expire naturally
+- Reset Password: opens dialog for new password entry, invalidates all sessions immediately
+- Cannot deactivate own account: button disabled with tooltip "Cannot deactivate your own account"
+
+---
+
+## Admin API Keys Screen (`/admin/api-keys`)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  API Keys                                          [+ Generate Key] │
+├─────────────────────────────────────────────────────────────────────┤
+│  Label                    Scope  Created      Last Used   Status    │
+├─────────────────────────────────────────────────────────────────────┤
+│  CivicTech — Liam Tran    write  Jul 1 2026   2h ago      ✅ Active │
+│  BloApp Mobile            read   Mar 5 2026   1d ago      ✅ Active │
+│  Old Integration (dim)    read   Jan 2025     Never       ⊘ Revoked │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**One-Time Key Display Modal** (shown immediately after Generate):
+
+```
+┌────────────────────────────────────────────────────────┐
+│  ⚠ Copy your API key now                           [×] │
+│  This key cannot be shown again.                       │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│  ┌────────────────────────────────────────────────┐   │
+│  │  a3f92b1c4e5d...8f2a1b9c0e3d  (64 chars)       │   │
+│  └────────────────────────────────────────────────┘   │
+│  [📋 Copy key]        ⏱ 30 seconds remaining          │
+│                                                        │
+│  [I've copied it — Close]                              │
+└────────────────────────────────────────────────────────┘
+```
+
+- Key display area: `<input type="text" readonly>` for keyboard select/copy
+- Countdown timer: visual urgency without blocking
+- Closing modal without copying: confirmation: "Are you sure? The key cannot be shown again."
+
+---
+
+## Admin Response Templates Screen (`/admin/response-templates`)
+
+**Create/Edit Drawer fields:**
+- Name (required, unique among active)
+- Category filter (optional — limits template to one category)
+- Department filter (optional)
+- Active toggle
+- Body textarea (up to 10,000 chars) with:
+  - Toolbar showing `{{ticket_id}}` `{{address}}` `{{category_name}}` insert buttons
+  - Unknown `{{...}}` tokens highlighted in amber with tooltip: "Unknown placeholder — will not be substituted"
+
+---
+
+## Information Hierarchy (Admin Screens)
+
+| Priority | Content | Placement |
+|----------|---------|-----------|
+| Primary | Item list/table | Main content area |
+| Primary | Create/Edit form (drawer) | Right-side drawer (420px) |
+| Secondary | Search bar | Top of list |
+| Secondary | Create button | Top right |
+| Tertiary | Active/Inactive filter | Below search (optional toggle) |
+| Tertiary | Breadcrumb | Page header |
+
+---
+
+## States (Common Admin)
+
+| State | Appearance |
+|-------|------------|
+| Empty list | "No [items] yet. Create the first one." + CTA button |
+| Create success | Toast: "[Item name] created successfully"; list refreshes |
+| Save error | Field-level errors in drawer; drawer stays open |
+| Deactivate with warnings | Warning count shown in confirm dialog |
+| Conflict (duplicate) | Field error inline: "[field] already in use" |
