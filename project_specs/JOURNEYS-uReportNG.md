@@ -391,18 +391,18 @@ Liam's existing integration code, without modification, submits a service reques
 | Stage | Action | Touchpoint | Thinking | Feeling | Pain Point | Opportunity |
 |---|---|---|---|---|---|---|
 | **1 · Initiate Sync Job** | Cron fires at 02:00 UTC; job assembles query: `GET /api/v2/requests?status=open&start_date=2026-07-05&page=1&page_size=50` | F7 — `GET /api/v2/requests` | "Standard params — same as last night's run. Should be a few hundred records max." | Confident in routine | Legacy endpoint had no pagination — large date ranges caused timeouts; Liam had to workaround by shrinking windows | `page` and `page_size` documented with defaults; `total_count` or `has_next_page` field in response envelope |
-| **2 · Receive First Page** | Server returns 50 records in < 2 seconds; response includes `has_next_page: true, total_count: 187` | F7 — Paginated response envelope | "187 records. 4 pages at 50 each. Let me iterate." | Methodical, trusting the API contract | No `total_count` in legacy response — sync job never knew if it had all records; silent data gaps | Response envelope includes `page`, `page_size`, `total_count`, `has_next_page` as top-level fields — not buried in headers |
-| **3 · Paginate Through Results** | Job iterates pages 2, 3, 4; each returns < 2 seconds; final page returns `has_next_page: false` | F7 — Paginated `GET /api/v2/requests` | "Page 4, 37 records, `has_next_page: false`. We're done. 187 total — matches." | Satisfied — clean termination | Inconsistent pagination across pages (e.g., page 3 returns 51 records) would break Liam's count validation | Strict `page_size` enforcement: last page returns ≤ `page_size` records and `has_next_page: false`; no off-by-one |
+| **2 · Receive First Page** | Server returns 50 records in < 2 seconds; response headers include `X-Total-Count: 187`, `X-Has-Next-Page: true` | F7 — Paginated response headers | "187 records. 4 pages at 50 each. Let me iterate." | Methodical, trusting the API contract | No `total_count` in legacy response — sync job never knew if it had all records; silent data gaps | Response headers include `X-Total-Count`, `X-Has-Next-Page`, `X-Page`, `X-Page-Size` — response body stays a raw GeoReport v2 array; existing clients that ignore headers are unaffected |
+| **3 · Paginate Through Results** | Job iterates pages 2, 3, 4; each returns < 2 seconds; final page returns header `X-Has-Next-Page: false` | F7 — Paginated `GET /api/v2/requests` | "Page 4, 37 records, `X-Has-Next-Page: false`. We're done. 187 total — matches `X-Total-Count`." | Satisfied — clean termination | Inconsistent pagination across pages (e.g., page 3 returns 51 records) would break Liam's count validation | Strict `page_size` enforcement: last page returns ≤ `page_size` records and `X-Has-Next-Page: false`; no off-by-one |
 | **4 · Hit Rate Limit** | On a large historical backfill run, job fires 200 requests in 30 seconds; server returns HTTP 429 with `Retry-After: 60` | F7 — Rate-limit response, `Retry-After` header | "429 — rate limit. `Retry-After: 60`. Back off for 60 seconds and resume. Not a server outage." | Relieved the signal is actionable | Legacy API returned 500 on throttling — Liam's monitoring logged false server errors; support emails followed | 429 response includes both `Retry-After` header and machine-readable body; distinct from all 5xx codes |
-| **5 · Complete Sync & Verify** | Job resumes after backoff; completes remaining pages; writes sync log: "187 records synced, 0 errors, 02:04 UTC" | F7 → Internal (Liam's system) | "Clean run. 187 records, no errors. Schedule confirmed." | Confident, satisfied | If sync completes but total_count mismatches Liam's local count, he has no way to identify missing records | Support a `GET /api/v2/requests/count?status=open&start_date=...` or include `total_count` so Liam can cross-validate |
+| **5 · Complete Sync & Verify** | Job resumes after backoff; completes remaining pages; writes sync log: "187 records synced, 0 errors, 02:04 UTC" | F7 → Internal (Liam's system) | "Clean run. 187 records, no errors. `X-Total-Count` matches my local count. Schedule confirmed." | Confident, satisfied | If `X-Total-Count` header is absent and count mismatches, Liam has no way to identify missing records | `X-Total-Count` header on every paginated response enables Liam to cross-validate total records after full iteration |
 
 ---
 
 #### Key Moments
 
-- **Decision Point — Stage 2 Receive First Page:** If the response envelope omits `total_count` or `has_next_page`, Liam's sync job cannot determine when it has retrieved all records — leading to silent data gaps in his local cache.
+- **Decision Point — Stage 2 Receive First Page:** If the `X-Total-Count` and `X-Has-Next-Page` response headers are absent, Liam's sync job cannot determine when it has retrieved all records — leading to silent data gaps in his local cache.
 - **Risk of Abandonment — Stage 4 Hit Rate Limit:** A 429 response that is indistinguishable from a 500 causes Liam's monitoring to alert at 2 AM, waking up his on-call engineer unnecessarily — and generating a support escalation to Bloomington IT.
-- **Delight Opportunity — Stage 5 Complete Sync:** A predictable, documented pagination contract (page/page_size/has_next_page/total_count) is not flashy, but it earns deep integration partner trust. Liam's nightly job "just works" — no defensive hacks, no workarounds.
+- **Delight Opportunity — Stage 5 Complete Sync:** A predictable, documented pagination contract (`page`/`page_size` params + `X-Total-Count`/`X-Has-Next-Page` response headers) is not flashy, but it earns deep integration partner trust. Liam's nightly job "just works" — no defensive hacks, no workarounds.
 
 ---
 
@@ -491,8 +491,8 @@ Diane's ticket history timeline, Renata's admin action log, and Liam's key last-
 | JRN-04.1 | 3 Parse Response | JTBD-04.1 | `service_request_id` returned in exact v2 field name; JSON + XML |
 | JRN-04.1 | 4 Auth Error Path | JTBD-04.1, JTBD-04.3 | HTTP 401 with machine-readable body on revoked/invalid key |
 | JRN-04.2 | 1 Initiate Sync | JTBD-04.2 | `GET /api/v2/requests` accepts `page`, `page_size`, `status`, `start_date` |
-| JRN-04.2 | 2 First Page | JTBD-04.2 | Response envelope includes `total_count`, `has_next_page` |
-| JRN-04.2 | 3 Paginate | JTBD-04.2 | All pages return < 2s; `has_next_page: false` on last page |
+| JRN-04.2 | 2 First Page | JTBD-04.2 | Response headers include `X-Total-Count`, `X-Has-Next-Page: true`; body is raw GeoReport v2 array |
+| JRN-04.2 | 3 Paginate | JTBD-04.2 | All pages return < 2s; `X-Has-Next-Page: false` header on last page |
 | JRN-04.2 | 4 Rate Limit | JTBD-04.3 | HTTP 429 returned with `Retry-After` header; distinct from 5xx |
 | JRN-04.2 | 5 Complete Sync | JTBD-04.2 | Full dataset synced; no missing records; total_count cross-validates |
 

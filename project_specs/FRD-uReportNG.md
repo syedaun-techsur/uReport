@@ -133,7 +133,7 @@ This document specifies the detailed functional behavior of every feature in uRe
 |-------|------|----------|-------------|
 | `lat` | `number` | Yes | Valid latitude −90 to 90 |
 | `lng` | `number` | Yes | Valid longitude −180 to 180 |
-| `address` | `string` | Yes | ≥5 chars, ≤500 chars |
+| `address` | `string` | No | ≤500 chars; populated from Nominatim autocomplete, manual entry, or reverse geocode. When absent (e.g., Nominatim unavailable and user only dropped a pin), staff views display coordinates as fallback. |
 | `category_id` | `string (cuid)` | Yes | Must match an active category |
 | `description` | `string` | Yes | ≥10 chars, ≤4000 chars |
 | `name` | `string` | Conditional | Required if `anon_allowed=false`; ≤200 chars |
@@ -151,7 +151,7 @@ This document specifies the detailed functional behavior of every feature in uRe
 z.object({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  address: z.string().min(5).max(500),
+  address: z.string().max(500).optional(), // optional: may be absent if Nominatim unavailable
   category_id: z.string().cuid(),
   description: z.string().min(10).max(4000),
   name: z.string().max(200).optional(),
@@ -159,6 +159,7 @@ z.object({
   phone: z.string().max(30).optional(),
 })
 ```
+- `address` is optional. When absent, ticket and staff views display coordinates as `"{lat}, {lng}"`. At least `lat` + `lng` must be present (enforced separately).
 - If category `anon_allowed = false` and both `name` and `email` are absent → validation error `CONTACT_REQUIRED`.
 - File size checked server-side; MIME type validated against allowlist.
 - `category_id` verified to exist and be active via DB lookup inside the route handler (after schema parse).
@@ -406,7 +407,7 @@ z.object({
 - Saved filter Bookmarks (create, load, update, delete)
 - Bulk status update
 - Bulk assignee update
-- Sort by created_at, updated_at, priority
+- Sort by created_at, updated_at
 - Quick-view popover on row hover
 - Map view toggle (visualize filtered queue on Leaflet)
 
@@ -452,7 +453,7 @@ z.object({
 | `date_from` | `string` | No | ISO8601 date |
 | `date_to` | `string` | No | ISO8601 date; ≥ date_from |
 | `bbox` | `string` | No | `minLat,minLng,maxLat,maxLng` comma-separated |
-| `sort` | `string` | No | `created_at\|updated_at\|priority`; default `created_at` |
+| `sort` | `string` | No | `created_at\|updated_at`; default `created_at` |
 | `order` | `string` | No | `asc\|desc`; default `desc` |
 | `page` | `number` | No | ≥1; default 1 |
 | `page_size` | `number` | No | 10–100; default 25 |
@@ -775,9 +776,11 @@ z.object({
 1. Admin navigates to `/admin/categories`.
 2. List shows all categories (active + inactive), sorted by group, then name.
 3. Admin creates/edits a category via a drawer form:
-   - `name`, `description`, `icon` (lucide icon name), `color` (hex), `department_id`, `anon_allowed` (bool), `active` (bool), `service_code` (Open311 string, must be unique among active categories).
+   - `name`, `description`, `icon` (lucide icon name), `color` (hex), `department_id`, `group_id` (optional; selected from the seeded `CategoryGroup` list), `anon_allowed` (bool), `active` (bool), `service_code` (Open311 string, must be unique among active categories).
 4. `POST /api/admin/categories` or `PATCH /api/admin/categories/[id]`.
 5. To deactivate: `PATCH /api/admin/categories/[id]` with `{ active: false }`. If any open tickets reference this category, display a warning count but allow deactivation.
+
+**CategoryGroup note:** `CategoryGroup` records are seed-only in v1 (e.g., "Streets & Transportation", "Parks & Recreation", "Utilities"). Admins assign categories to an existing group but cannot create, rename, or delete groups through the UI in v1. Group management is deferred to a future iteration.
 
 **Validation:**
 - `name` required, ≤200 chars, unique among active categories.
@@ -862,6 +865,26 @@ z.object({
 - `scope` must be `read` or `write`.
 - Generated key is 32 bytes (64 hex chars); stored only as SHA-256 hash.
 
+### F06g: Admin Audit Log
+
+**Process:**
+1. Every write action in F06a–F06f automatically appends an `AdminAuditLog` entry in the same transaction (no separate trigger required — each API route handler creates the log entry).
+2. Admin navigates to `/admin/audit-log` to view chronological log entries.
+3. Log list shows: timestamp, actor username, action type, resource type, resource ID, and a summary of changed fields (from `metadata` JSON).
+4. Filter panel: filter by `actor_id`, `resource_type`, `action`, date range.
+5. Log entries are read-only — no edit or delete UI is presented.
+
+**Validation:**
+- `metadata` JSON must never contain PII fields (name, email, phone, password_hash). Server strips these before persisting.
+- Log entries are append-only at the DB level (no `UPDATE` or `DELETE` SQL on this table).
+
+**API Surface:**
+- `GET /api/admin/audit-log` — paginated log list with filter params: `actor_id?`, `resource_type?`, `action?`, `start_date?`, `end_date?`, `page?`, `page_size?` (max 100)
+
+**Schema Surface:** uses `AdminAuditLog`, `User` — see `Y0.15`.
+
+---
+
 **Inputs (summary across F06 sub-features):**
 
 | Entity | Key Fields | Unique Constraints |
@@ -902,7 +925,7 @@ z.object({
 - `PATCH /api/admin/api-keys/[id]` — revoke key
 → see `Y1-api.md §Admin`
 
-**Schema Surface (this feature):** uses `Category`, `CategoryGroup`, `Department`, `Substatus`, `ResponseTemplate`, `User`, `ApiKey` — see `Y0-schema.md`.
+**Schema Surface (this feature):** uses `Category`, `CategoryGroup`, `Department`, `Substatus`, `ResponseTemplate`, `User`, `ApiKey`, `AdminAuditLog` — see `Y0.4–Y0.6`, `Y0.9`, `Y0.11–Y0.12`, `Y0.15`.
 
 ---
 
@@ -1022,7 +1045,12 @@ z.object({
 1. Apply rate limit: `OPEN311_RATE_LIMIT` req/min per IP (default 60; env-configurable).
 2. Parse and validate query params (see Inputs).
 3. Build Prisma query with all active filters.
-4. Return paginated array of `service_request` objects.
+4. Return paginated array of `service_request` objects (raw JSON array — no body envelope, per GeoReport v2 spec).
+5. Include pagination metadata as response headers (extension to v2 spec; existing clients that ignore headers are unaffected):
+   - `X-Total-Count: <total matching records>`
+   - `X-Page: <current page>`
+   - `X-Page-Size: <page size>`
+   - `X-Has-Next-Page: true|false`
 
 **Query Parameters:**
 
@@ -1757,6 +1785,36 @@ model BookmarkedFilter {
 
 ---
 
+### Y0.15: AdminAuditLog
+
+Records every configuration change made by admin users. Append-only; no actor can edit or delete entries.
+
+```prisma
+model AdminAuditLog {
+  id           String   @id @default(cuid())
+  actor_id     String
+  actor        User     @relation(fields: [actor_id], references: [id])
+  action       String   // CATEGORY_CREATED | CATEGORY_UPDATED | CATEGORY_DEACTIVATED |
+                        // DEPARTMENT_CREATED | DEPARTMENT_UPDATED | DEPARTMENT_DEACTIVATED |
+                        // SUBSTATUS_CREATED | SUBSTATUS_UPDATED | SUBSTATUS_REORDERED |
+                        // TEMPLATE_CREATED | TEMPLATE_UPDATED | TEMPLATE_DEACTIVATED |
+                        // USER_CREATED | USER_DEACTIVATED | USER_REACTIVATED | USER_PASSWORD_RESET |
+                        // API_KEY_GENERATED | API_KEY_REVOKED
+  resource_type String  // "Category" | "Department" | "Substatus" | "ResponseTemplate" | "User" | "ApiKey"
+  resource_id   String  // ID of the affected record
+  metadata      Json?   // Before/after snapshot or relevant fields (no PII — omit passwords/hashes)
+  created_at    DateTime @default(now())
+
+  @@index([actor_id])
+  @@index([resource_type, resource_id])
+  @@index([created_at])
+}
+```
+
+*AdminAuditLog entries are created server-side within the same Prisma transaction as the admin action they record. No client-side creation.*
+
+---
+
 ### Y0.14: Indexes Summary
 
 | Table | Index | Type | Purpose |
@@ -1773,6 +1831,9 @@ model BookmarkedFilter {
 | Substatus | `(status, sort_order)` | BTree | UI ordering |
 | ApiKey | `(key_hash)` | BTree | Auth lookup |
 | BookmarkedFilter | `(user_id)` | BTree | User's saved views |
+| AdminAuditLog | `(actor_id)` | BTree | Filter by admin user |
+| AdminAuditLog | `(resource_type, resource_id)` | BTree | Audit trail per resource |
+| AdminAuditLog | `(created_at)` | BTree | Chronological queries |
 
 ---
 
@@ -1913,7 +1974,7 @@ assignee_id?: string
 date_from?: ISO8601
 date_to?: ISO8601
 bbox?: "minLat,minLng,maxLat,maxLng"
-sort?: created_at|updated_at  (default: created_at)
+sort?: created_at|updated_at  (default: created_at)  // priority sort deferred to future iteration
 order?: asc|desc  (default: desc)
 page?: number  (default: 1)
 page_size?: number  (default: 25, max: 100)
@@ -2041,6 +2102,7 @@ All report endpoints accept: `start_date?, end_date?, interval?, group_by?, stat
 | POST | `/api/admin/users/[id]/reset-password` | [AUTH: admin] | Reset user password |
 | GET/POST | `/api/admin/api-keys` | [AUTH: admin] | List / generate API keys |
 | PATCH | `/api/admin/api-keys/[id]` | [AUTH: admin] | Revoke API key |
+| GET | `/api/admin/audit-log` | [AUTH: admin] | Admin action audit log |
 
 ---
 

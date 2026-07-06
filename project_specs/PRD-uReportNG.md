@@ -86,6 +86,7 @@ The City of Bloomington's existing uReport system is built on a legacy PHP MVC s
 - Free-text description field
 - Optional photo/media upload (stored in Postgres — no filesystem)
 - Optional contact information (name, email, phone); anonymous mode per category setting
+- Address field is optional — populated from Nominatim autocomplete, manual entry, or reverse geocode; when absent, staff views display coordinates as fallback
 - Confirmation page with generated ticket ID for tracking
 - Responsive layout — usable on mobile browsers in the field
 - WCAG 2.1 AA throughout: keyboard navigation, ARIA labels, focus management
@@ -207,6 +208,11 @@ The City of Bloomington's existing uReport system is built on a legacy PHP MVC s
 - Generate, label, and revoke API keys for third-party integrators
 - Per-key scope (read-only vs. write)
 - Last-used timestamp display
+
+**Admin action audit log:**
+- Append-only log of all configuration changes (categories, departments, users, API keys, substatuses, response templates) with actor identity and timestamp
+- Filterable by actor, resource type, action type, and date range
+- Read-only — no edit or delete; no PII stored in log metadata
 
 **Priority:** P0 — Critical, MVP requirement (without category/dept/user management the system cannot operate)
 
@@ -367,7 +373,7 @@ The City of Bloomington's existing uReport system is built on a legacy PHP MVC s
 | F3 | Staff Ticket Queue | P0 | Staff, Admin | None | FTS + Bookmarks |
 | F4 | Staff Ticket Detail | P0 | Staff, Admin | None | Timeline, templates, media |
 | F5 | Staff CRM / People Management | P1 | Staff, Admin | None | Constituent linking + dedupe |
-| F6 | Admin Panel | P0 | Admin | API key CRUD | Reference data + user management |
+| F6 | Admin Panel | P0 | Admin | API key CRUD | Reference data + user management + audit log |
 | F7 | Open311 GeoReport v2 API | P0 | Integrators | All endpoints | Must not regress |
 | F8 | Reports & Metrics Dashboard | P1 | Staff, Admin | None | CSV export; geo heat map |
 | F9 | Infrastructure & Platform | P0 | Ops/Dev | None | K8s-native, health, migrations |
@@ -410,6 +416,7 @@ The Prisma schema will include the following primary entities:
 - **User** — staff/admin accounts (id, email, username, password_hash, role, department_id, active)
 - **ApiKey** — Open311 API client keys (id, label, key_hash, scope, last_used_at, revoked_at)
 - **BookmarkedFilter** — saved staff queue filters (id, user_id, name, filter_json)
+- **AdminAuditLog** — append-only log of admin configuration changes (id, actor_id, action, resource_type, resource_id, metadata JSON, created_at)
 
 ---
 

@@ -303,7 +303,7 @@ When my scheduled sync job queries Bloomington's open requests by service code, 
 - `GET /api/v2/requests` supports `page` and `page_size` query parameters with documented defaults
 - Filtering by `service_code`, `status`, `start_date`, and `end_date` works correctly and reduces result set as expected
 - Response time for a paginated query (e.g., 50 results) is < 2 seconds under normal load
-- Total count or `has_next_page` signal is present so the sync job knows when to stop paginating
+- Pagination metadata conveyed via response headers: `X-Total-Count`, `X-Page`, `X-Page-Size`, `X-Has-Next-Page` — response body remains a raw GeoReport v2 array (spec-compliant; existing clients unaffected)
 
 **Success Measure:** Liam's nightly sync job completes a full dataset refresh using paginated `GET /api/v2/requests` queries — with no timeouts and no missing records — within the scheduled window.
 

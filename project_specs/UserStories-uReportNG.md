@@ -68,6 +68,7 @@
 - [ ] Selecting a candidate places the map pin at the corresponding lat/lng and populates the address field
 - [ ] If Nominatim is unavailable, the search field shows "Address search temporarily unavailable" and the map pin entry method remains fully functional
 - [ ] The `GEOCODE_UNAVAILABLE` warning does not block ticket submission
+- [ ] If submission is made without a resolved address (e.g., Nominatim unavailable, user only dropped a pin), the `address` field is omitted from the POST body; staff views display the coordinates as fallback ("39.165, −86.526")
 
 **Priority:** P0 | **Feature Ref:** F0
 
@@ -251,7 +252,7 @@
 - [ ] Applying filters updates the URL query params and re-fetches the list
 - [ ] `date_from` must be ≤ `date_to`; an invalid date range returns a `DATE_RANGE_INVALID` error message
 - [ ] `bbox` filter accepts `minLat,minLng,maxLat,maxLng`; invalid format shows `BBOX_INVALID` error
-- [ ] Sort controls allow sorting by created date, updated date (ascending or descending)
+- [ ] Sort controls allow sorting by created date or updated date (ascending or descending); priority sort is deferred to a future iteration
 - [ ] A quick-view popover appears on row hover showing a summary of the ticket
 
 **Priority:** P0 | **Feature Ref:** F3
@@ -507,7 +508,7 @@
 **Acceptance Criteria:**
 - [ ] The category management screen is at `/admin/categories` (requires admin role)
 - [ ] The list shows all categories (active and inactive), grouped by CategoryGroup and sorted by name
-- [ ] A "Create Category" form drawer accepts: name (required, unique among active), description, icon (lucide icon name), color (hex `#RRGGBB`), department, `anon_allowed` toggle, `active` toggle, and Open311 `service_code`
+- [ ] A "Create Category" form drawer accepts: name (required, unique among active), description, icon (lucide icon name), color (hex `#RRGGBB`), department, optional group (selected from seeded CategoryGroup list — groups are not admin-configurable in v1), `anon_allowed` toggle, `active` toggle, and Open311 `service_code`
 - [ ] `service_code` must be unique across ALL categories (active and inactive); duplicate returns `409 DUPLICATE_SERVICE_CODE`
 - [ ] `color` must match `#RRGGBB` pattern if provided; invalid format shows a validation error
 - [ ] `department_id` must reference an active department; selecting an inactive department shows an error
@@ -589,6 +590,20 @@
 
 **Priority:** P0 | **Feature Ref:** F6
 
+### US-6.7: View the Admin Action Audit Log
+**As a** Renata Osei, **I want to** review a chronological log of all configuration changes made by admin users — categories, departments, users, API keys — **so that** when a constituent complaint escalates or a configuration change appears to have broken something, I can identify who changed what and when without reconstructing events from email threads.
+
+**Acceptance Criteria:**
+- [ ] The audit log screen is accessible at `/admin/audit-log` (requires admin role)
+- [ ] The log displays a paginated list (default 25 per page) showing: timestamp, actor username, action type (e.g., `CATEGORY_CREATED`, `USER_DEACTIVATED`, `API_KEY_REVOKED`), resource type, resource ID, and a summary of changed fields
+- [ ] Filter panel supports: actor (staff/admin user), resource type, action type, and date range
+- [ ] All write actions in the Admin Panel (categories, departments, substatuses, response templates, users, API keys) automatically create an `AdminAuditLog` entry in the same transaction — no action is missing from the log
+- [ ] Log entries are read-only — no edit or delete controls are presented
+- [ ] `metadata` stored per entry never contains PII fields (name, email, phone, password hashes)
+- [ ] The audit log is append-only at the database level
+
+**Priority:** P0 | **Feature Ref:** F6
+
 ---
 
 ## Epic 7: Open311 GeoReport v2 API (F7)
@@ -637,6 +652,7 @@
 - [ ] Supported query parameters: `service_request_id`, `service_code`, `status` (`open`|`closed`), `start_date`, `end_date`, `page`, `page_size` (max 100)
 - [ ] Open311 `status=open` maps internally to `Ticket.status IN ('open', 'in_progress')`; `status=closed` maps to `IN ('closed', 'archived')`
 - [ ] Pagination via `page` and `page_size` is supported; no response timeouts on large corpora
+- [ ] Response body is a raw JSON array (GeoReport v2 spec-compliant); pagination metadata is conveyed via response headers: `X-Total-Count`, `X-Page`, `X-Page-Size`, `X-Has-Next-Page` — existing clients that ignore headers are unaffected
 - [ ] Response field names match the GeoReport v2 spec exactly: `service_request_id`, `lat`, `long`, `requested_datetime`, `updated_datetime`, `status_notes`, `agency_responsible`, `service_name`, `service_code`
 - [ ] Rate limit exceeded returns HTTP 429 with `Retry-After` header
 - [ ] Both JSON and XML response formats are supported
@@ -826,6 +842,7 @@
 | US-6.4 | Manage Canned Response Templates | Renata Osei | P0 | F6 |
 | US-6.5 | Create and Manage Staff User Accounts | Renata Osei | P0 | F6 |
 | US-6.6 | Generate and Revoke Open311 API Keys | Renata Osei | P0 | F6 |
+| US-6.7 | View the Admin Action Audit Log | Renata Osei | P0 | F6 |
 | US-7.1 | Retrieve the List of Active Service Categories | Liam Tran | P0 | F7 |
 | US-7.2 | Submit a Service Request via the API | Liam Tran | P0 | F7 |
 | US-7.3 | Query and Filter Service Requests | Liam Tran | P0 | F7 |
@@ -841,8 +858,8 @@
 
 ---
 
-**Total Stories:** 46  
-**P0 Stories:** 37 (across F0, F1, F2, F3, F4, F6, F7, F9)  
+**Total Stories:** 47  
+**P0 Stories:** 38 (across F0, F1, F2, F3, F4, F6, F7, F9)  
 **P1 Stories:** 9 (across F5, F8)
 
 ---

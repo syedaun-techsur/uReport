@@ -18,7 +18,7 @@
 
 ## Overview
 
-This story map organizes all 46 user stories across a two-dimensional grid:
+This story map organizes all 47 user stories across a two-dimensional grid:
 
 - **X-axis (columns):** Journey stages derived from JOURNEYS-uReportNG.md — the "when/where" of user activity
 - **Y-axis (rows):** User stories within each stage, grouped by epic and persona
@@ -87,6 +87,7 @@ This story map organizes all 46 user stories across a two-dimensional grid:
 | SM-6.4 | JRN-02.2 | 4 · Add Public Note | Epic 6 (F6) | US-6.4: Manage Canned Response Templates | JTBD-03.1 → Staff send consistent accurate communications without typing responses from scratch → /admin/response-templates with {{ticket_id}}, {{address}}, {{category_name}} placeholder support; deactivated templates hidden from picker | R1 |
 | SM-6.5 | JRN-03.1 | 1 · Navigate to Admin | Epic 6 (F6) | US-6.5: Create and Manage Staff User Accounts | JTBD-03.1 → New staff account created within 2 minutes; no developer involvement → /admin/users create with role + dept; deactivate blocks login; admin-initiated reset increments token_version invalidating all sessions | R1 |
 | SM-6.6 | JRN-03.2 | 2 · Generate New Key | Epic 6 (F6) | US-6.6: Generate and Revoke Open311 API Keys | JTBD-03.2 → Scoped key generated; displayed once; revocation immediate; 401 on next call → /admin/api-keys generates 32-byte hex; stores SHA-256 hash; plaintext shown once; revoked_at causes immediate 401 | R1 |
+| SM-6.7 | JRN-03.2 | 4 · Monitor and Audit | Epic 6 (F6) | US-6.7: View the Admin Action Audit Log | JTBD-03.3 → Full audit trail retrieved in < 2 min; admin changes logged with actor and timestamp → /admin/audit-log shows paginated AdminAuditLog; filterable by actor/resource/action/date; append-only; no PII in metadata | R1 |
 | SM-9.1 | JRN-03.1 | 1 · Navigate to Admin | Epic 9 (F9) | US-9.1: Deploy as Single Kubernetes Pod | JTBD-03.1 → Deployments and restarts are self-healing; no manual intervention → infrastructure.json with sidecar_requirements: postgres; prisma migrate deploy runs at boot with retry; SEED_ON_BOOT supported | R1 |
 | SM-9.2 | JRN-03.1 | 1 · Navigate to Admin | Epic 9 (F9) | US-9.2: Liveness and Readiness Health Endpoints | JTBD-03.1 → K8s determines pod readiness; no traffic until DB and migrations verified → /api/health/live returns 200 always; /api/health/ready checks SELECT 1 and migration state; 503 if not ready | R1 |
 | SM-9.3 | JRN-03.1 | 4 · Save and Verify | Epic 9 (F9) | US-9.3: Store and Serve Media Files from Postgres | JTBD-03.1 → No media data lost when pod restarts → Files ≤8KB in bytea; files >8KB via Postgres Large Object; GET /api/media/[id] streams with correct headers; no filesystem writes | R1 |
@@ -98,7 +99,7 @@ This story map organizes all 46 user stories across a two-dimensional grid:
 |---|---|---|---|---|---|---|
 | SM-7.1 | JRN-04.1 | 1 · Receive Key | Epic 7 (F7) | US-7.1: Retrieve List of Active Service Categories | JTBD-04.1 → Integrator can refresh local service category list when new categories added → GET /api/v2/services returns GeoReport v2 fields (service_code, service_name, group, etc.); JSON default; format=xml returns valid <services> doc | R1 |
 | SM-7.2 | JRN-04.1 | 2 · Submit POST Request | Epic 7 (F7) | US-7.2: Submit a Service Request via the API | JTBD-04.1 → POST /api/v2/requests accepts GeoReport v2 fields exactly; service_request_id returned → Requires api_key; missing/invalid key returns 401 with key_not_found; read-scope on POST returns 403; 201 response includes service_request_id | R1 |
-| SM-7.3 | JRN-04.2 | 1 · Initiate Sync | Epic 7 (F7) | US-7.3: Query and Filter Service Requests | JTBD-04.2 → GET /api/v2/requests supports page, page_size, status, start_date; < 2s response → Pagination via page/page_size (max 100); rate limit exceeded returns 429 with Retry-After; GeoReport v2 field names exact; JSON + XML | R1 |
+| SM-7.3 | JRN-04.2 | 1 · Initiate Sync | Epic 7 (F7) | US-7.3: Query and Filter Service Requests | JTBD-04.2 → GET /api/v2/requests supports page, page_size, status, start_date; < 2s response → Pagination via page/page_size (max 100); X-Total-Count/X-Has-Next-Page response headers; rate limit exceeded returns 429 with Retry-After; GeoReport v2 field names exact; JSON + XML | R1 |
 | SM-7.4 | JRN-04.2 | 2 · Receive First Page | Epic 7 (F7) | US-7.4: Retrieve Single Service Request by ID | JTBD-04.1 → GET /api/v2/requests/{id} returns latest status; existing client code unchanged → Returns array with one service_request object; 404 if not found; public no-auth endpoint; format=xml supported | R1 |
 
 ---
@@ -141,13 +142,13 @@ Full traceability chain: JTBD outcome → journey stage → NaC text → story(i
 | NaC-03.1h | JTBD-03.1 | No media data lost on pod restart | JRN-03.1 · 4 Save and Verify | Files stored bytea (≤8KB) or Large Object (>8KB); GET /api/media/[id] streams with correct headers; no FS writes | US-9.3 |
 | NaC-03.1i | JTBD-03.1 | Missing PostGIS does not block deployment | JRN-03.1 · 1 Navigate | Startup detects PostGIS; sets GEO_MODE; no pod startup failure; all geo queries branch on GEO_MODE | US-9.4 |
 | NaC-03.2a | JTBD-03.2 | Scoped key generated; displayed once; revocation immediate | JRN-03.2 · 2 Generate Key | /admin/api-keys generates 32-byte hex; stores SHA-256; plaintext displayed once; revoked_at causes immediate 401 on next call | US-6.6 |
-| NaC-03.3a | JTBD-03.3 | Full audit trail retrieved in < 2 min | JRN-03.2 · 4 Monitor | TicketHistory timeline append-only; admin action log for category/user/key changes; filterable by ticket ID or action type | US-4.1, US-6.6 |
+| NaC-03.3a | JTBD-03.3 | Full audit trail retrieved in < 2 min | JRN-03.2 · 4 Monitor | TicketHistory timeline append-only; AdminAuditLog for category/user/API key changes; /admin/audit-log filterable by actor/resource/action/date; append-only DB | US-4.1, US-6.6, US-6.7 |
 | NaC-03.3b | JTBD-03.3 | PII removed on request; audit log entry created; tickets intact | JRN-03.1 · 4 Save and Verify | Anonymize nulls PII; sets anonymized_at; PERSON_ANONYMIZED entry with actor+timestamp; irreversible | US-5.5 |
 | NaC-03.3c | JTBD-03.3 | Service level metrics reportable to city leadership | JRN-03.1 · 5 Confirm Live | Open vs. closed breakdown; avg resolution time per category/dept; date range configurable; accessible to admin role | US-8.2 |
 | NaC-04.1a | JTBD-04.1 | GeoReport v2 field names exact; JSON + XML parse correctly | JRN-04.1 · 2–3 Submit/Parse | POST /api/v2/requests accepts service_code, lat, long, description; returns service_request_id in exact v2 field name; JSON + XML | US-7.2 |
 | NaC-04.1b | JTBD-04.1 | GET /api/v2/services keeps local category cache current | JRN-04.1 · 1 Receive Key | GET /api/v2/services returns exact v2 fields; only active categories; JSON default; format=xml valid | US-7.1 |
 | NaC-04.1c | JTBD-04.1 | GET /api/v2/requests/{id} returns latest status without full list query | JRN-04.2 · 2 Receive First Page | Returns array with one service_request; 404 if not found; public no-auth; format=xml supported | US-7.4 |
-| NaC-04.2a | JTBD-04.2 | Paginated sync completes; no timeouts; no missing records | JRN-04.2 · 1–3 Initiate/Pages | GET /api/v2/requests supports page, page_size (max 100), status, start_date, end_date; all pages < 2s; 429 with Retry-After on rate limit | US-7.3 |
+| NaC-04.2a | JTBD-04.2 | Paginated sync completes; no timeouts; no missing records | JRN-04.2 · 1–3 Initiate/Pages | GET /api/v2/requests supports page, page_size (max 100), status, start_date, end_date; response headers X-Total-Count/X-Has-Next-Page/X-Page/X-Page-Size; all pages < 2s; 429 with Retry-After on rate limit | US-7.3 |
 | NaC-04.3a | JTBD-04.3 | 401 and 429+Retry-After are distinct from 5xx | JRN-04.1 · 4 Auth Error / JRN-04.2 · 4 Rate Limit | Invalid/revoked key returns 401 with key_not_found body; rate limit returns 429 with Retry-After header; no 5xx confusion | US-7.2, US-7.3 |
 
 ---
@@ -166,12 +167,12 @@ Full traceability chain: JTBD outcome → journey stage → NaC text → story(i
 | F2 Auth & Sessions | US-2.1–2.3 | 3 | PER-02, PER-03 |
 | F3 Staff Queue | US-3.1–3.5 | 5 | PER-02 |
 | F4 Ticket Detail | US-4.1–4.6 | 6 | PER-02 |
-| F6 Admin Panel | US-6.1–6.6 | 6 | PER-03 |
+| F6 Admin Panel | US-6.1–6.7 | 7 | PER-03 |
 | F7 Open311 API | US-7.1–7.4 | 4 | PER-04 |
 | F9 Infrastructure | US-9.1–9.4 | 4 | PER-03 (Ops) |
-| **R1 Total** | | **37** | **All 4 personas** |
+| **R1 Total** | | **38** | **All 4 personas** |
 
-**JTBD addressed in R1:** JTBD-01.1, JTBD-01.2, JTBD-02.1, JTBD-02.2, JTBD-03.1, JTBD-03.2, JTBD-04.1, JTBD-04.2, JTBD-04.3
+**JTBD addressed in R1:** JTBD-01.1, JTBD-01.2, JTBD-02.1, JTBD-02.2, JTBD-03.1, JTBD-03.2, **JTBD-03.3** (partial — admin audit log; ticket timeline ships R1; F5 anonymize/F8 metrics complete in R2), JTBD-04.1, JTBD-04.2, JTBD-04.3
 
 **R1 enables these complete journeys:**
 - JRN-01.1 (Marcus reports a pothole) — US-0.1→0.6 complete
@@ -179,7 +180,7 @@ Full traceability chain: JTBD outcome → journey stage → NaC text → story(i
 - JRN-02.1 (Diane morning queue triage) — US-2.1, US-3.1, US-3.3, US-3.4, US-4.1 complete
 - JRN-02.2 (Diane finds, updates, closes a ticket) — US-3.2, US-4.2–4.5 complete
 - JRN-03.1 (Renata creates a new category) — US-6.1, US-6.2, US-6.5, US-9.1 complete
-- JRN-03.2 (Renata issues and revokes an API key) — US-6.6 complete
+- JRN-03.2 (Renata issues and revokes an API key; reviews audit log) — US-6.6, US-6.7 complete
 - JRN-04.1 (Liam POSTs a service request) — US-7.2 complete
 - JRN-04.2 (Liam paginated nightly sync) — US-7.3 complete
 
@@ -228,7 +229,7 @@ Full traceability chain: JTBD outcome → journey stage → NaC text → story(i
 | JTBD-02.3 | ⚠️ Partial (US-3.5 geo queue view) | ✅ US-5.1–5.4, US-8.1–8.4 complete |
 | JTBD-03.1 | ✅ US-6.1–6.5, US-9.1–9.4 | — |
 | JTBD-03.2 | ✅ US-6.6 | — |
-| JTBD-03.3 | ⚠️ Partial (US-4.1 history timeline) | ✅ US-5.5, US-8.2 fill gap |
+| JTBD-03.3 | ⚠️ Partial (US-4.1 history timeline + US-6.7 admin audit log) | ✅ US-5.5, US-8.2 complete compliance/reporting depth |
 | JTBD-04.1 | ✅ US-7.1, US-7.2, US-7.4 | — |
 | JTBD-04.2 | ✅ US-7.3 | — |
 | JTBD-04.3 | ✅ US-7.2, US-7.3 (401/429 signals) | — |
@@ -294,7 +295,7 @@ Verification that NaC align with story acceptance criteria.
 | NaC-04.1a | POST v2 fields exact; service_request_id returned | US-7.2 | ✅ AC: "Open311 field long (not lng)"; "service_request_id, service_code, status, requested_datetime" in 201 response |
 | NaC-04.1b | GET /services returns exact v2 fields; JSON + XML | US-7.1 | ✅ AC: "exactly the GeoReport v2 fields: service_code, service_name, description, metadata, type, keywords, group" |
 | NaC-04.1c | GET /requests/{id} array-wrapped; 404 if not found | US-7.4 | ✅ AC: "array with one service_request object (as per Open311 spec)"; "HTTP 404" if not found |
-| NaC-04.2a | Pagination page/page_size/status/dates; < 2s; 429+Retry-After | US-7.3 | ✅ AC: page+page_size max 100; "Rate limit exceeded returns HTTP 429 with Retry-After header" |
+| NaC-04.2a | Pagination page/page_size/status/dates; < 2s; 429+Retry-After; X-Total-Count/X-Has-Next-Page headers | US-7.3 | ✅ AC: page+page_size max 100; X-Total-Count/X-Has-Next-Page response headers; "Rate limit exceeded returns HTTP 429 with Retry-After header" |
 | NaC-04.3a | 401 distinct from 429+Retry-After distinct from 5xx | US-7.2, US-7.3 | ✅ AC: 401 with key_not_found body (US-7.2); 429 with Retry-After (US-7.3); no code conflation |
 
 ---
