@@ -140,23 +140,71 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01–08 | Phase 1 | Pending |
-| DATA-01–04 | Phase 1 | Pending |
-| AUTH-01–04 | Phase 2 | Pending |
-| PUB-01–06 | Phase 3 | Pending |
-| TRACK-01–02 | Phase 3 | Pending |
-| O311-01–07 | Phase 4 | Pending |
-| STAFF-01–05 | Phase 5 | Pending |
-| STAFF-06–11 | Phase 5 | Pending |
-| CRM-01–05 | Phase 6 | Pending |
-| ADMIN-01–08 | Phase 6 | Pending |
-| RPT-01–04 | Phase 7 | Pending |
+| INFRA-01 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-02 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-03 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-04 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-05 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-06 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-07 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| INFRA-08 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| DATA-01 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| DATA-02 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| DATA-03 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| DATA-04 | Phase 1 — K8s Scaffold & Data Foundation | Pending |
+| AUTH-01 | Phase 2 — Authentication & Sessions | Pending |
+| AUTH-02 | Phase 2 — Authentication & Sessions | Pending |
+| AUTH-03 | Phase 2 — Authentication & Sessions | Pending |
+| AUTH-04 | Phase 2 — Authentication & Sessions | Pending |
+| PUB-01 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| PUB-02 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| PUB-03 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| PUB-04 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| PUB-05 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| PUB-06 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| TRACK-01 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| TRACK-02 | Phase 3 — Public Portal & Constituent Tracking | Pending |
+| O311-01 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| O311-02 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| O311-03 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| O311-04 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| O311-05 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| O311-06 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| O311-07 | Phase 4 — Open311 GeoReport v2 API | Pending |
+| STAFF-01 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-02 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-03 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-04 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-05 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-06 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-07 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-08 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-09 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-10 | Phase 5 — Staff Ticket Console | Pending |
+| STAFF-11 | Phase 5 — Staff Ticket Console | Pending |
+| CRM-01 | Phase 6 — Admin Panel & CRM | Pending |
+| CRM-02 | Phase 6 — Admin Panel & CRM | Pending |
+| CRM-03 | Phase 6 — Admin Panel & CRM | Pending |
+| CRM-04 | Phase 6 — Admin Panel & CRM | Pending |
+| CRM-05 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-01 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-02 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-03 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-04 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-05 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-06 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-07 | Phase 6 — Admin Panel & CRM | Pending |
+| ADMIN-08 | Phase 6 — Admin Panel & CRM | Pending |
+| RPT-01 | Phase 7 — Reports & Metrics Dashboard | Pending |
+| RPT-02 | Phase 7 — Reports & Metrics Dashboard | Pending |
+| RPT-03 | Phase 7 — Reports & Metrics Dashboard | Pending |
+| RPT-04 | Phase 7 — Reports & Metrics Dashboard | Pending |
 
 **Coverage:**
-- v1 requirements: 50 total
-- Mapped to phases: 50
+- v1 requirements: 59 total (INFRA×8 + DATA×4 + AUTH×4 + PUB×6 + TRACK×2 + O311×7 + STAFF×11 + CRM×5 + ADMIN×8 + RPT×4)
+- Mapped to phases: 59
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-07-06*
-*Last updated: 2026-07-06 after initial definition from PRD + spec doc suite*
+*Last updated: 2026-07-06 — traceability corrected to 59 requirements; STAFF group expanded to STAFF-01..11*
