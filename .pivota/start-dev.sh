@@ -52,7 +52,7 @@ export HOST=0.0.0.0
 # For allowedDevOrigins (required for sandbox preview iframe embedding on
 # Next 14.x+), there is NO env var; it is a next.config.* field only.
 # See the pre-exec snippet below — we write a small overlay file as a
-# best-effort seed. Read the ## Notes section in the catalog entry for limitations.
+# best-effort seed. Read the react-next catalog Notes for limitations.
 #
 # HOST=0.0.0.0 is also exported for the rare downstream tool / script that
 # reads $HOST for its own host-binding decisions (Next itself ignores it).
@@ -117,9 +117,8 @@ done
 # Best-effort schema migration on platform-provided-DB backends (K8s / Local):
 # when the platform injects a database (PIVOTA_DB_MODE / DATABASE_URL set) and
 # the app declares a db:migrate script, run it BEFORE the dev server so the
-# schema exists on first request. Migrations are expected to be idempotent
-# (prisma migrate deploy is idempotent by design).
-# No-op on Daytona (no injected DATABASE_URL -> compose/DinD owns the DB).
+# schema exists on first request. Migrations are expected to be idempotent.
+# No-op on Daytona (no injected DATABASE_URL → compose/DinD owns the DB).
 if [ -n "${PIVOTA_DB_MODE:-}" ] || [ -n "${DATABASE_URL:-}" ]; then
   if node -e "process.exit(require('./package.json').scripts?.['db:migrate']?0:1)" 2>/dev/null; then
     echo "[pivota] platform DB detected — running 'npm run db:migrate' (best-effort) before dev server"
