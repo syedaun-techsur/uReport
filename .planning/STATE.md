@@ -2,16 +2,16 @@
 pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase_complete
-stopped_at: Completed 01-k8s-scaffold-data-foundation-03-PLAN.md
-last_updated: "2026-07-07T17:00:00.000Z"
-last_activity: "2026-07-07 — Phase 1 complete: all 3 plans done (scaffold, schema, health endpoints)"
+status: completed
+stopped_at: Completed 02-authentication-sessions-01-PLAN.md
+last_updated: "2026-07-07T22:37:49.952Z"
+last_activity: "2026-07-07 — 02-01 complete: Auth.js credentials provider, Zod schemas, login page, Playwright E2E tests"
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 5
-  completed_plans: 3
-  percent: 43
+  total_plans: 8
+  completed_plans: 4
+  percent: 50
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** City constituents can report municipal issues and staff can manage the full ticket lifecycle — all from one responsive, accessible web app running as a single Kubernetes pod with a Postgres sidecar.
-**Current focus:** Phase 1 — K8s Scaffold & Data Foundation
+**Current focus:** Phase 2 — Authentication & Sessions
 
 ## Current Position
 
-Phase: 1 of 7 (K8s Scaffold & Data Foundation) — COMPLETE
-Plan: 3 of 3 in current phase (all done)
-Status: Phase 1 complete — ready for Phase 2
-Last activity: 2026-07-07 — Phase 1 complete: scaffold + schema + health endpoints, all 5 success criteria verified
+Phase: 2 of 7 (Authentication & Sessions) — IN PROGRESS
+Plan: 1 of 2 in current phase (02-01 complete)
+Status: Auth.js v5 credentials provider + login UI + E2E tests done; ready for 02-02 (middleware guards)
+Last activity: 2026-07-07 — 02-01 complete: Auth.js credentials provider, Zod schemas, login page, Playwright E2E tests
 
-Progress: [████░░░░░░] 40%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [████░░░░░░] 40%
 
 *Updated after each plan completion*
 | Phase 01-k8s-scaffold-data-foundation P03 | 2min | 2 tasks | 8 files |
+| Phase 02-authentication-sessions P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,9 @@ Recent decisions affecting current work:
 - [Phase 01-k8s-scaffold-data-foundation]: search_vector tsvector NOT in Prisma schema — added via ALTER TABLE in migration SQL (Prisma cannot represent tsvector natively)
 - [Phase 01-k8s-scaffold-data-foundation]: FTS: 'english' dictionary for Ticket (stemming), 'simple' for Person (email/phone digits must not be stripped)
 - [Phase 01-k8s-scaffold-data-foundation]: PostGIS migration uses DO $$ conditional block — silently skips geog column when PostGIS extension absent
+- [Phase 02-authentication-sessions]: Credentials-only auth (no OAuth) — staff/admin are internal city employees
+- [Phase 02-authentication-sessions]: token_version invalidation on every JWT decode — accepted for v1 (T-02-06)
+- [Phase 02-authentication-sessions]: Generic 'Invalid username or password' error — prevents credential enumeration (T-02-02)
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-07T16:42:02.467Z
-Stopped at: Completed 01-k8s-scaffold-data-foundation-02-PLAN.md
+Last session: 2026-07-07T22:37:49.950Z
+Stopped at: Completed 02-authentication-sessions-01-PLAN.md
 Resume file: None
