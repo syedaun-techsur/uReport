@@ -37,6 +37,9 @@
     "tailwind-merge": "^2.5.0",
     "tailwindcss-animate": "^1.0.7"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "devDependencies": {
     "prisma": "^6.0.0",
     "typescript": "^5.5.0",
