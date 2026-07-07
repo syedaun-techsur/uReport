@@ -3,15 +3,15 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-authentication-sessions-03-PLAN.md
-last_updated: "2026-07-07T23:29:14.229Z"
-last_activity: "2026-07-07 — 02-01 complete: Auth.js credentials provider, Zod schemas, login page, Playwright E2E tests"
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-07-07T23:30:17.267Z"
+last_activity: "2026-07-07 — 02-04 complete: /staff/tickets placeholder page + Playwright gap-closure tests (Phase 2 done)"
 progress:
   total_phases: 7
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 10
-  completed_plans: 6
-  percent: 50
+  completed_plans: 7
+  percent: 70
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-07-06)
 
 ## Current Position
 
-Phase: 2 of 7 (Authentication & Sessions) — IN PROGRESS
-Plan: 1 of 2 in current phase (02-01 complete)
-Status: Auth.js v5 credentials provider + login UI + E2E tests done; ready for 02-02 (middleware guards)
-Last activity: 2026-07-07 — 02-01 complete: Auth.js credentials provider, Zod schemas, login page, Playwright E2E tests
+Phase: 2 of 7 (Authentication & Sessions) — COMPLETE
+Plan: 4 of 4 in current phase (all done: 02-01, 02-02, 02-03, 02-04)
+Status: Phase 2 complete — auth provider, middleware, seed fix, and staff/tickets placeholder all done
+Last activity: 2026-07-07 — 02-04 complete: /staff/tickets placeholder page + Playwright gap-closure tests
 
-Progress: [█████░░░░░] 50%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [█████░░░░░] 50%
 | Phase 01-k8s-scaffold-data-foundation P03 | 2min | 2 tasks | 8 files |
 | Phase 02-authentication-sessions P01 | 3min | 2 tasks | 6 files |
 | Phase 02-authentication-sessions P03 | 1min | 1 tasks | 1 files |
+| Phase 02-authentication-sessions P04 | 1min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,7 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-sessions]: token_version invalidation on every JWT decode — accepted for v1 (T-02-06)
 - [Phase 02-authentication-sessions]: Generic 'Invalid username or password' error — prevents credential enumeration (T-02-02)
 - [Phase 02-authentication-sessions]: Auto-seed on empty DB (user count = 0) rather than requiring SEED_ON_BOOT=true — eliminates UAT gap where all 8 auth tests failed on fresh DB
+- [Phase 02-authentication-sessions]: Placeholder page required for middleware interception — Next.js returns 404 before middleware fires when page file is missing — Creating app/staff/tickets/page.tsx is the minimal fix for both Gap 2 and Gap 3
 
 ### Pending Todos
 
@@ -90,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-07T23:29:14.228Z
-Stopped at: Completed 02-authentication-sessions-03-PLAN.md
+Last session: 2026-07-07T23:30:17.266Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None
