@@ -24,13 +24,28 @@ async function waitForDb() {
   process.exit(1);
 }
 
+async function detectGeoMode() {
+  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  try {
+    await client.connect();
+    await client.query('SELECT PostGIS_Version()');
+    await client.end();
+    process.env.GEO_MODE = 'postgis';
+    console.log('[INFO] GEO_MODE=postgis (PostGIS extension detected)');
+  } catch {
+    try { await client.end(); } catch {}
+    process.env.GEO_MODE = 'haversine';
+    console.log('[INFO] GEO_MODE=haversine (PostGIS unavailable — using Haversine fallback)');
+  }
+}
+
 async function main() {
-  // 1. Validate required env vars (from TechArch §6.8 startup validation)
+  // 1. Validate required env vars
   for (const key of ['DATABASE_URL', 'AUTH_SECRET']) {
     if (!process.env[key]) { console.error(`[FATAL] Missing: ${key}`); process.exit(1); }
   }
 
-  // 2. Wait for DB with exponential backoff (max 60s)
+  // 2. Wait for DB
   await waitForDb();
 
   // 3. Run migrations (idempotent)
@@ -44,11 +59,14 @@ async function main() {
     execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
   }
 
-  // 5. Start Next.js — bind 0.0.0.0:3000 (required for K8s health probes)
+  // 5. PostGIS detection — sets GEO_MODE env var for the Next.js process
+  await detectGeoMode();
+
+  // 6. Start Next.js — bind 0.0.0.0:3000 (required for K8s health probes)
   console.log('[INFO] Starting Next.js server...');
   const next = spawn('npx', ['next', 'start', '-p', '3000', '-H', '0.0.0.0'], {
     stdio: 'inherit',
-    env: process.env,
+    env: process.env,  // GEO_MODE is in process.env at this point
   });
   next.on('exit', (code) => process.exit(code ?? 1));
 }
