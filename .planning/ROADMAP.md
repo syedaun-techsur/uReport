@@ -32,12 +32,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. All Prisma models (Ticket, Person, Category, Department, User, ApiKey, BookmarkedFilter, AdminAuditLog, etc.) are present in the schema and migration runs cleanly against the sidecar
   4. `Ticket.search_vector` tsvector with GIN index and trigger exists; PostGIS geography column and GIST index are created when extension is available; app logs `GEO_MODE` on boot
   5. Seed script produces at least: default CategoryGroups, sample Categories, one admin user, one staff user — DB is queryable after `prisma db seed`
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Project scaffold — Next.js 15, TypeScript, shadcn/ui, Tailwind, next.config.ts, infrastructure.json, scripts/migrate-and-start.js
-- [ ] 01-02: Prisma schema — full data model, FTS migration SQL, PostGIS migration SQL, seed script
-- [ ] 01-03: Health endpoints, env config validation, CSP/frame-options, logger, PostGIS detection
+- [ ] 01-01-PLAN.md — Project scaffold (Next.js 15, TypeScript, next.config.ts, infrastructure.json, scripts/migrate-and-start.js, lib/prisma.ts, lib/logger.ts, types/)
+- [ ] 01-02-PLAN.md — Prisma schema (all 15 models, FTS migration SQL with triggers, PostGIS conditional migration, seed script)
+- [ ] 01-03-PLAN.md — Health endpoints (/api/health/live + /api/health/ready), PostGIS detection + Haversine fallback (lib/geo.ts), shared API response helpers
 
 ### Phase 2: Authentication & Sessions
 **Goal**: City staff and admins can log in with email/password, have role-enforced sessions that persist across browser refreshes, and be redirected to login when accessing protected routes without a session
