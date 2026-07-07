@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-authentication-sessions-01-PLAN.md
-last_updated: "2026-07-07T22:37:49.952Z"
+stopped_at: Completed 02-authentication-sessions-03-PLAN.md
+last_updated: "2026-07-07T23:29:14.229Z"
 last_activity: "2026-07-07 — 02-01 complete: Auth.js credentials provider, Zod schemas, login page, Playwright E2E tests"
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 8
-  completed_plans: 4
+  total_plans: 10
+  completed_plans: 6
   percent: 50
 ---
 
@@ -55,6 +55,7 @@ Progress: [█████░░░░░] 50%
 *Updated after each plan completion*
 | Phase 01-k8s-scaffold-data-foundation P03 | 2min | 2 tasks | 8 files |
 | Phase 02-authentication-sessions P01 | 3min | 2 tasks | 6 files |
+| Phase 02-authentication-sessions P03 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,7 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-sessions]: Credentials-only auth (no OAuth) — staff/admin are internal city employees
 - [Phase 02-authentication-sessions]: token_version invalidation on every JWT decode — accepted for v1 (T-02-06)
 - [Phase 02-authentication-sessions]: Generic 'Invalid username or password' error — prevents credential enumeration (T-02-02)
+- [Phase 02-authentication-sessions]: Auto-seed on empty DB (user count = 0) rather than requiring SEED_ON_BOOT=true — eliminates UAT gap where all 8 auth tests failed on fresh DB
 
 ### Pending Todos
 
@@ -88,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-07T22:37:49.950Z
-Stopped at: Completed 02-authentication-sessions-01-PLAN.md
+Last session: 2026-07-07T23:29:14.228Z
+Stopped at: Completed 02-authentication-sessions-03-PLAN.md
 Resume file: None
