@@ -24,6 +24,9 @@ screen-*.css*
 !scripts/*.js
 ansible/roles/City-of-Bloomington.*
 ansible/*.retry
+.nuxt/
+.vite/
+.turbo/
 
 # >>> pivota:gitignore-managed
 # Patterns auto-managed by Pivota — refreshed on every push so coverage
@@ -146,6 +149,3 @@ opencode.json.bak
 AGENTS.md
 .opencode.session
 # <<< pivota:gitignore-managed
-.nuxt/
-.vite/
-.turbo/
