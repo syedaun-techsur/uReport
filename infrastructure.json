@@ -1,0 +1,4 @@
+{
+  "sidecar_requirements": ["postgres"],
+  "port": 3000
+}
