@@ -12,7 +12,7 @@ uReport NG is built in seven phases that follow a strict dependency chain: the K
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: K8s Scaffold & Data Foundation** - Next.js 15 app running on port 3000, infrastructure.json, health endpoints, complete Prisma schema with FTS/PostGIS, seed data
+- [x] **Phase 1: K8s Scaffold & Data Foundation** - Next.js 15 app running on port 3000, infrastructure.json, health endpoints, complete Prisma schema with FTS/PostGIS, seed data
 - [ ] **Phase 2: Authentication & Sessions** - Auth.js credentials login, role-based sessions (public/staff/admin), route guards
 - [ ] **Phase 3: Public Portal & Constituent Tracking** - Map-first issue submission, photo upload, confirmation, public ticket lookup, clustered public map
 - [ ] **Phase 4: Open311 GeoReport v2 API** - All five endpoints (services + requests), JSON+XML, API-key auth, pagination headers
@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: K8s Scaffold & Data Foundation
-**Status**: In Progress
+**Status**: Complete
 **Goal**: The application boots as a single Kubernetes pod, connects to its Postgres sidecar, runs migrations idempotently, and exposes health probes — with the complete Prisma schema (including FTS triggers and PostGIS index) and seed data in place
 **Depends on**: Nothing (first phase)
 **Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04, INFRA-05, INFRA-06, INFRA-07, INFRA-08, DATA-01, DATA-02, DATA-03, DATA-04
@@ -36,9 +36,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project scaffold (Next.js 15, TypeScript, next.config.ts, infrastructure.json, scripts/migrate-and-start.js, lib/prisma.ts, lib/logger.ts, types/)
-- [ ] 01-02-PLAN.md — Prisma schema (all 15 models, FTS migration SQL with triggers, PostGIS conditional migration, seed script)
-- [ ] 01-03-PLAN.md — Health endpoints (/api/health/live + /api/health/ready), PostGIS detection + Haversine fallback (lib/geo.ts), shared API response helpers
+- [x] 01-01-PLAN.md — Project scaffold (Next.js 15, TypeScript, next.config.ts, infrastructure.json, scripts/migrate-and-start.js, lib/prisma.ts, lib/logger.ts, types/)
+- [x] 01-02-PLAN.md — Prisma schema (all 15 models, FTS migration SQL with triggers, PostGIS conditional migration, seed script)
+- [x] 01-03-PLAN.md — Health endpoints (/api/health/live + /api/health/ready), PostGIS detection + Haversine fallback (lib/geo.ts), shared API response helpers
 
 ### Phase 2: Authentication & Sessions
 **Goal**: City staff and admins can log in with email/password, have role-enforced sessions that persist across browser refreshes, and be redirected to login when accessing protected routes without a session
@@ -145,7 +145,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. K8s Scaffold & Data Foundation | 0/3 | Not started | - |
+| 1. K8s Scaffold & Data Foundation | 3/3 | Complete | 2026-07-07 |
 | 2. Authentication & Sessions | 0/2 | Not started | - |
 | 3. Public Portal & Constituent Tracking | 0/3 | Not started | - |
 | 4. Open311 GeoReport v2 API | 0/2 | Not started | - |
