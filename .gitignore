@@ -19,6 +19,9 @@ vendor
 .sass-cache
 screen-*.css*
 *-*.js
+# Exception: Next.js app scripts are not legacy PHP build artifacts
+!scripts/
+!scripts/*.js
 ansible/roles/City-of-Bloomington.*
 ansible/*.retry
 
