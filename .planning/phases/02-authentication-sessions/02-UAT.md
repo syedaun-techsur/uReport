@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 02-authentication-sessions
 source: 02-01-SUMMARY.md, 02-02-SUMMARY.md
 started: 2026-07-07T22:47:14Z
-updated: 2026-07-07T22:50:41Z
+updated: 2026-07-07T22:53:00Z
 ---
 
 ## Current Test
@@ -70,9 +70,12 @@ skipped: 5
   reason: "User reported: No seed users exist — login fails with invalid credentials. Seed data from previous phase was removed; a fresh DB is spun up between phases."
   severity: blocker
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "migrate-and-start.js wraps the seed call in `if (process.env.SEED_ON_BOOT === 'true')` — seed is opt-in, not automatic on fresh DB boot; prisma/seed.ts correctly creates admin and staff users but is never called without the env var"
+  artifacts:
+    - path: "scripts/migrate-and-start.js"
+      issue: "Seed is gated behind SEED_ON_BOOT=true env var; not called on fresh DB spin-up in UAT environment"
+  missing:
+    - "Set SEED_ON_BOOT=true in the UAT/sandbox environment, OR make the seed unconditional on first boot (e.g., check for existing users before seeding)"
   debug_session: ""
 
 - truth: "Invalid credentials on /login show generic error message 'Invalid username or password'"
@@ -80,9 +83,12 @@ skipped: 5
   reason: "User reported: After typing in the wrong user I see a 404 page not found"
   severity: blocker
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "The 404 occurs after a successful login — not on wrong credentials — because the default callbackUrl in app/login/page.tsx is hardcoded to /staff/tickets, which does not yet exist (Phase 5 deliverable). Wrong-credential error display is correct and would not produce a 404."
+  artifacts:
+    - path: "app/login/page.tsx"
+      issue: "Default callbackUrl hardcoded to /staff/tickets (line 17); on successful auth router.push lands on a missing page → 404"
+  missing:
+    - "app/staff/tickets/page.tsx must exist for the post-login redirect to succeed (Phase 5 scope), OR create a minimal Phase 2 placeholder page"
   debug_session: ""
 
 - truth: "Navigating to /staff/tickets without a session redirects to /login?callbackUrl=..."
@@ -90,7 +96,10 @@ skipped: 5
   reason: "User reported: 404 page not found when navigating to /staff/tickets without a session"
   severity: blocker
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "app/staff/tickets/page.tsx does not exist (Phase 5 deliverable); Next.js returns 404 before the middleware auth-guard can redirect — middleware.ts is correctly implemented and would redirect unauthenticated users once the page file exists"
+  artifacts:
+    - path: "app/staff/tickets/page.tsx"
+      issue: "File does not exist — only app/staff/account/password/page.tsx exists under the staff tree"
+  missing:
+    - "Create app/staff/tickets/page.tsx (even a minimal placeholder) so middleware can intercept the request and redirect unauthenticated users to /login"
   debug_session: ""
