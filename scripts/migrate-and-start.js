@@ -53,10 +53,18 @@ async function main() {
   execSync('npx prisma migrate deploy', { stdio: 'inherit' });
   console.log('[INFO] Migrations complete.');
 
-  // 4. Optional seed
-  if (process.env.SEED_ON_BOOT === 'true') {
-    console.log('[INFO] Running seed script...');
+  // 4. Auto-seed on empty DB (idempotent — skips if users already exist)
+  const seedClient = new Client({ connectionString: process.env.DATABASE_URL });
+  await seedClient.connect();
+  const { rows } = await seedClient.query('SELECT COUNT(*)::int AS cnt FROM "User"');
+  await seedClient.end();
+  const userCount = rows[0].cnt;
+  if (userCount === 0 || process.env.SEED_ON_BOOT === 'true') {
+    console.log(`[INFO] ${userCount === 0 ? 'Empty DB detected — running' : 'SEED_ON_BOOT=true —'} seed script...`);
     execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
+    console.log('[INFO] Seed complete.');
+  } else {
+    console.log(`[INFO] Seed skipped — ${userCount} user(s) already exist.`);
   }
 
   // 5. PostGIS detection — sets GEO_MODE env var for the Next.js process
