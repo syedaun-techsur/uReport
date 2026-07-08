@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 03-public-portal-constituent-tracking
-source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md]
-started: 2026-07-08T14:26:32Z
-updated: 2026-07-08T14:28:45Z
+source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md]
+started: 2026-07-08T15:57:00Z
+updated: 2026-07-08T16:02:00Z
 ---
 
 ## Current Test
@@ -12,27 +12,21 @@ updated: 2026-07-08T14:28:45Z
 
 ## Tests
 
-### 1. Report Form Loads with Map
-expected: Navigate to / — page shows a Leaflet map with "Report a Municipal Issue" heading, grouped category picker (categories grouped by type), description textarea, optional contact fields (name/email/phone), and photo file input. Map is interactive — clicking drops a pin.
-result: issue
-reported: "everything working except i cant see the categories in the dropdown"
-severity: major
+### 1. Report Form Loads with Map and Categories
+expected: Navigate to / — page shows a Leaflet map with "Report a Municipal Issue" heading, grouped category picker (categories grouped by type such as Streets & Transportation, Parks & Recreation, Utilities), description textarea, optional contact fields (name/email/phone), and photo file input. Map is interactive — clicking drops a pin.
+result: pass
 
 ### 2. Drop a Pin and Submit a Report
-expected: Click anywhere on the map — a pin drops and the address field auto-fills via reverse geocode (Nominatim). Fill in a category, description, and submit — you receive a unique ticket ID and are redirected to a confirmation page showing "Report Submitted!" with the reference ID.
-result: issue
-reported: "it says fail: no service category because i dont see any in the dropdown"
-severity: major
+expected: Click anywhere on the map — a pin drops and the address field auto-fills via reverse geocode (Nominatim). Fill in a category and description and submit — you receive a unique ticket ID and are redirected to a confirmation page showing "Report Submitted!" with the reference ID.
+result: pass
 
 ### 3. Anonymous Submission (no contact info)
-expected: Submit a report without filling in name/email/phone — the form accepts it and creates the ticket. Anonymous submission works when the category allows it.
-result: skipped
-reason: Category dropdown empty — same root cause blocks this test
+expected: Submit a report without filling in name/email/phone — the form accepts it and creates the ticket. The confirmation page shows without requiring any personal details.
+result: pass
 
 ### 4. Photo Attachment
-expected: Attach an image file to the report form and submit — the ticket is created successfully (the photo is stored as Postgres bytea, no filesystem write).
-result: skipped
-reason: Category dropdown empty — same root cause blocks form submission
+expected: Attach an image file to the report form and submit — the ticket is created successfully (the photo is stored as Postgres bytea, no filesystem write). No error is shown.
+result: pass
 
 ### 5. Address Search (Nominatim geocode)
 expected: Type a street address into the address search box on the map — a dropdown of matching results appears. Clicking a result moves the map pin to that location and fills the address field.
@@ -40,7 +34,9 @@ result: pass
 
 ### 6. Ticket Lookup by ID
 expected: Navigate to /tickets/[id] with a known ticket ID — see the ticket's category, status, creation date, description, and address. No PII (email/phone/name) is exposed on this public page.
-result: skipped
+result: issue
+reported: "404 page not found"
+severity: major
 
 ### 7. Public Map View
 expected: Navigate to /map and see a Leaflet map with clustered markers for open/in-progress tickets. Clicking a cluster zooms in. Clicking a pin opens a popup with a "View details" link.
@@ -49,26 +45,26 @@ result: pass
 ## Summary
 
 total: 7
-passed: 2
-issues: 2
+passed: 6
+issues: 1
 pending: 0
-skipped: 3
+skipped: 0
 
 ## Self-Check
 
 boot: 200
-routes_probed: 6 ok / 0 failed
+routes_probed: 7 ok / 0 failed
 cookie: n/a (public routes — no auth required)
 per_test:
   - test: 1
     verdict: advisory
-    note: "🤖 Auto-check: GET / → 200. Note: DB migrations were not applied at boot (start-dev.sh's migrate+seed block may not have run in this sandbox session). Manually ran `prisma migrate deploy` + `prisma seed` to restore DB state. App is now fully functional."
+    note: "🤖 Auto-check: GET / → 200. DB was empty on this sandbox session (seed hadn't auto-run yet); manually ran npm run db:seed — 6 categories now in DB across Parks & Recreation, Streets & Transportation, Utilities. The 03-04 fix updates start-dev.sh to auto-seed on next fresh boot."
   - test: 2
     verdict: pass
-    note: "🤖 Auto-check: POST /api/tickets with lat/lng/category/description → 201 {ticket_id, reference_id, status, category_name, created_at}. Confirmation page at /tickets/[id]/confirm → 200."
+    note: "🤖 Auto-check: POST /api/tickets (multipart) → 201 with ticket_id, reference_id, status, category_name. Confirmation page /tickets/[id]/confirm → 200."
   - test: 3
     verdict: pass
-    note: "🤖 Auto-check: POST /api/tickets without name/email/phone → 201 (anonymous submission accepted for anon_allowed categories)."
+    note: "🤖 Auto-check: POST /api/tickets without name/email/phone (multipart) → 201. Anonymous submission accepted."
   - test: 4
     verdict: skipped (needs human)
     note: "Photo upload requires browser file input — cannot drive via curl."
@@ -76,39 +72,21 @@ per_test:
     verdict: skipped (needs human)
     note: "Nominatim geocode dropdown is UI-only — cannot drive via curl."
   - test: 6
-    verdict: pass
-    note: "🤖 Auto-check: GET /api/tickets/[id]/public → 200 with id/reference_id/status/category/description/address/lat/lng/responses. PII check: no email/phone/name/person fields in response."
+    verdict: fail
+    note: "🤖 Auto-check: GET /api/tickets/[internal_id]/public → 200. But confirmation page shows reference_id as the 'Ticket ID' to copy. GET /tickets/[reference_id] → 404 because route only queries by internal id. Root cause: public API and ticket detail page use findUnique({ where: { id } }) (internal CUID) — reference_id lookup not supported."
   - test: 7
     verdict: pass
-    note: "🤖 Auto-check: GET /api/tickets/public-map → 200 GeoJSON FeatureCollection with open/in-progress tickets as Point features. GET /map → 200."
+    note: "🤖 Auto-check: GET /api/tickets/public-map → 200 GeoJSON FeatureCollection (1 open ticket feature). GET /map → 200."
 
 ## Gaps
 
-- truth: "Category picker dropdown shows all available categories grouped by type"
+- truth: "Navigating to /tickets/[reference_id] shows the ticket's category, status, creation date, description, and address"
   status: failed
-  reason: "User reported: everything working except i cant see the categories in the dropdown"
+  reason: "User reported: 404 page not found"
   severity: major
-  test: 1
+  test: 6
   source: user
-  root_cause: "start-dev.sh pre-exec migration check uses `scripts?.migrate` but project declares script as `db:migrate` — condition evaluates falsy, migration never runs at boot, DB tables don't exist, /api/categories returns 500, categories array empty in frontend"
-  artifacts:
-    - path: ".pivota/start-dev.sh"
-      issue: "node -e \"process.exit(require('./package.json').scripts?.migrate?0:1)\" tests for 'migrate' key but package.json has 'db:migrate' — fix: check for 'db:migrate' OR run `npx prisma migrate deploy` unconditionally when DATABASE_URL is set"
-    - path: "package.json"
-      issue: "scripts.db:migrate = 'prisma migrate deploy' — the correct key is db:migrate not migrate"
-  missing:
-    - "Update start-dev.sh pre-exec migration check to handle db:migrate script name (or run prisma migrate deploy + seed directly when DATABASE_URL is present)"
-  debug_session: ""
-- truth: "Submitting the report form with a selected category creates a ticket and redirects to confirmation"
-  status: failed
-  reason: "User reported: it says fail: no service category because i dont see any in the dropdown"
-  severity: major
-  test: 2
-  source: user
-  root_cause: "Same as Test 1 — empty category list caused by missing DB migration at boot. Form client-side validation rejects submit with no category selected."
-  artifacts:
-    - path: ".pivota/start-dev.sh"
-      issue: "Same migrate script name mismatch as Test 1 gap"
-  missing:
-    - "Fix start-dev.sh migration step (same fix as Test 1)"
+  root_cause: ""
+  artifacts: []
+  missing: []
   debug_session: ""
