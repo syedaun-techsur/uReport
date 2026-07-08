@@ -108,13 +108,13 @@ Plans:
   3. A staff user can open a ticket and see its complete audit timeline — every status change, assignment, note, and media upload with timestamps and actor names
   4. A staff user can change a ticket's status and substatus, assign it to a department or staff member, and post either an internal note or a public-facing response (using a template or free text) — each action persists a TicketHistory entry
   5. A staff user can view all media attachments for a ticket in a gallery and see the ticket's location on a Leaflet mini-map
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: Staff ticket queue page — TicketTable, FilterPanel, FTS search, sort, pagination, bbox filter
-- [ ] 05-02: Bookmark CRUD (save/load/delete saved views)
-- [ ] 05-03: Ticket detail page — header, MiniMap, HistoryTimeline, status/substatus/assignee controls
-- [ ] 05-04: ResponseComposer (internal/public toggle, template picker), MediaGallery (view + upload)
+- [ ] 05-01-PLAN.md — Staff ticket queue API (GET /api/staff/tickets: FTS, filters, pagination, bbox, sort) + TicketTable + FilterPanel + StatusBadge + lib/fts.ts + Playwright E2E
+- [ ] 05-02-PLAN.md — Bookmark CRUD (POST/GET/DELETE /api/staff/bookmarks) + BookmarkBar UI + queue page integration + Playwright E2E
+- [ ] 05-03-PLAN.md — Ticket detail page (GET /api/staff/tickets/[id]) + HistoryTimeline + MiniMap (ssr:false) + MediaGallery (read) + Playwright E2E
+- [ ] 05-04-PLAN.md — Mutations (PATCH status/assign, POST responses, POST media) + ResponseComposer + MediaGallery upload + GET /api/staff/users + GET /api/staff/response-templates + Playwright E2E
 
 ### Phase 6: Admin Panel & CRM
 **Goal**: Admins can configure all system reference data (categories, departments, substatuses, response templates, users, API keys) through a back-office UI with a full audit log; staff can search, view, link, and manage constituent Person records
