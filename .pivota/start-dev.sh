@@ -52,7 +52,7 @@ export HOST=0.0.0.0
 # For allowedDevOrigins (required for sandbox preview iframe embedding on
 # Next 14.x+), there is NO env var; it is a next.config.* field only.
 # See the pre-exec snippet below — we write a small overlay file as a
-# best-effort seed. Read the `## Notes` section for limitations.
+# best-effort seed. Read the ## Notes section of the catalog entry for limitations.
 #
 # HOST=0.0.0.0 is also exported for the rare downstream tool / script that
 # reads $HOST for its own host-binding decisions (Next itself ignores it).
@@ -82,10 +82,7 @@ if [[ ! -f .env && -f .env.example ]]; then
   done < .env.example > .env
 fi
 
-# === Optional pre-exec snippet (JDK install, rustup, golang one-shot setup) ===
-# Catalog entries with PRE_EXEC_SNIPPET inject heavyweight one-time installs
-# here. Empty string when not needed.
-
+# === Optional pre-exec snippet (react-next: allowedDevOrigins overlay + DB migrate) ===
 # Only patch if user's next.config doesn't already include allowedDevOrigins.
 for CFG in next.config.mjs next.config.js next.config.ts; do
   if [[ -f "$CFG" ]]; then
@@ -119,15 +116,15 @@ done
 
 # Best-effort schema migration on platform-provided-DB backends (K8s / Local):
 # when the platform injects a database (PIVOTA_DB_MODE / DATABASE_URL set) and
-# the app declares a `migrate` script, run it BEFORE the dev server so the
+# the app declares a `db:migrate` script, run it BEFORE the dev server so the
 # schema exists on first request — even if the app's `dev` script didn't chain
-# `npm run migrate && …`. Migrations are expected to be idempotent
+# `npm run db:migrate && …`. Migrations are expected to be idempotent
 # (CREATE TABLE IF NOT EXISTS …), so a repeat when `dev` also runs migrate is
-# safe. No-op on Daytona (no injected DATABASE_URL → compose/DinD owns the DB).
+# safe. No-op when no injected DATABASE_URL.
 if [ -n "${PIVOTA_DB_MODE:-}" ] || [ -n "${DATABASE_URL:-}" ]; then
-  if node -e "process.exit(require('./package.json').scripts?.migrate?0:1)" 2>/dev/null; then
-    echo "[pivota] platform DB detected — running 'npm run migrate' (best-effort) before dev server"
-    npm run migrate || echo "[pivota] migrate non-zero (continuing; dev script may re-run it)"
+  if node -e "process.exit(require('./package.json').scripts?.['db:migrate']?0:1)" 2>/dev/null; then
+    echo "[pivota] platform DB detected — running 'npm run db:migrate' (best-effort) before dev server"
+    npm run db:migrate || echo "[pivota] db:migrate non-zero (continuing; dev script may re-run it)"
   fi
 fi
 
@@ -230,29 +227,3 @@ exit 1
 # Below this marker, projects may add custom shutdown / setup logic.
 # This region is PRESERVED across regenerations (plan 06's regen logic detects
 # the marker and re-appends user content verbatim after re-emitting the preamble).
-
-# === Pre-launch: migrate + seed (dev-mode DB prep) ===
-# PROJECT-OWNED: preserved below END PIVOTA PREAMBLE — do not remove on regen.
-# Mirrors scripts/migrate-and-start.js for the 'npm run dev' path.
-# Runs prisma migrate deploy (idempotent) then seeds if User table is empty.
-# Skipped entirely when DATABASE_URL is not set (no sidecar / compose DB).
-if [ -n "${DATABASE_URL:-}" ]; then
-  echo "[pivota-dev-db] Running prisma migrate deploy..."
-  npx prisma migrate deploy || echo "[pivota-dev-db] migrate non-zero (may be OK if schema already current)"
-
-  echo "[pivota-dev-db] Checking if seed is needed..."
-  USER_COUNT=$(node -e "
-    const { Client } = require('pg');
-    const c = new Client({ connectionString: process.env.DATABASE_URL });
-    c.connect()
-      .then(() => c.query('SELECT COUNT(*)::int AS cnt FROM \"User\"'))
-      .then(r => { console.log(r.rows[0].cnt); return c.end(); })
-      .catch(() => { console.log('0'); });
-  " 2>/dev/null) || USER_COUNT=0
-  if [ "${USER_COUNT:-0}" -eq 0 ]; then
-    echo "[pivota-dev-db] Empty DB — running seed..."
-    npx tsx prisma/seed.ts || echo "[pivota-dev-db] seed non-zero (check seed output above)"
-  else
-    echo "[pivota-dev-db] Seed skipped — ${USER_COUNT} user(s) already exist."
-  fi
-fi

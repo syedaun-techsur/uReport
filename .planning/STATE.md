@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-07-PLAN.md
-last_updated: "2026-07-08T02:35:25.951Z"
+stopped_at: Completed 03-05-PLAN.md
+last_updated: "2026-07-08T16:30:57.071Z"
 last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
 progress:
   total_phases: 7
-  completed_phases: 2
-  total_plans: 14
-  completed_plans: 11
+  completed_phases: 3
+  total_plans: 16
+  completed_plans: 16
   percent: 71
 ---
 
@@ -61,6 +61,10 @@ Progress: [███████░░░] 71%
 | Phase 02-authentication-sessions P06 | 1min | 2 tasks | 3 files |
 | Phase 02-authentication-sessions P08 | 1min | 1 tasks | 1 files |
 | Phase 02-authentication-sessions P07 | 2min | 2 tasks | 4 files |
+| Phase 03-public-portal-constituent-tracking P03 | 3min | 2 tasks | 6 files |
+| Phase 03-public-portal-constituent-tracking P01 | 5min | 2 tasks | 7 files |
+| Phase 03-public-portal-constituent-tracking P04 | 1min | 1 tasks | 1 files |
+| Phase 03-public-portal-constituent-tracking P05 | 1min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -90,6 +94,13 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-sessions]: Migrate+seed block placed below END PIVOTA PREAMBLE marker in start-dev.sh preserved region — survives start-dev.sh regeneration by START-DEV workflow
 - [Phase 02-authentication-sessions]: SameSite=None; Secure applied unconditionally (not gated on NODE_ENV=production) — required for preview iframe; Pivota preview always runs over HTTPS
 - [Phase 02-authentication-sessions]: csrfToken and callbackUrl cookies NOT httpOnly — Auth.js client-side signIn() must JS-read the CSRF token; httpOnly breaks every sign-in with CSRF mismatch
+- [Phase 03-public-portal-constituent-tracking]: Named prisma import { prisma } not default — matches lib/prisma.ts export style used across project
+- [Phase 03-public-portal-constituent-tracking]: Explicit response object allowlist in public API — no spread operator prevents accidental PII field leakage
+- [Phase 03-public-portal-constituent-tracking]: CDN URLs for Leaflet marker icons — avoids Next.js static image import issues, consistent with ReportingMap.tsx
+- [Phase 03-public-portal-constituent-tracking]: Remove app/page.tsx placeholder — (public)/page.tsx serves same / route; both cannot coexist in Next.js route groups
+- [Phase 03-public-portal-constituent-tracking]: GET /api/categories includes group_name via CategoryGroup join — avoids separate API call from frontend category picker
+- [Phase 03-public-portal-constituent-tracking]: Bracket notation scripts?.['db:migrate'] required for colon-containing npm script keys in Node.js inline -e expressions
+- [Phase 03-public-portal-constituent-tracking]: findFirst with OR: [{ id }, { reference_id: id }] replaces findUnique for dual-key public ticket lookup
 
 ### Pending Todos
 
@@ -101,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T02:35:25.949Z
-Stopped at: Completed 02-07-PLAN.md
+Last session: 2026-07-08T16:30:57.070Z
+Stopped at: Completed 03-05-PLAN.md
 Resume file: None

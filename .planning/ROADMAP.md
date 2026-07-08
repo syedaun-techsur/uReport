@@ -72,12 +72,14 @@ Plans:
   2. A constituent can optionally attach a photo (stored as Postgres bytea, no filesystem write) and optionally enter contact info; anonymous submission works when the category allows it
   3. A constituent can navigate to `/tickets/[id]` with their ticket ID and see category, status, substatus, creation date, and any public staff responses
   4. A constituent can navigate to `/map` and see all open/in-progress tickets as clustered Leaflet markers; clicking a cluster zooms in; clicking a pin opens a popup with a "View details" link
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [ ] 03-01-PLAN.md — Categories API, domain types/Zod schema, ReportingMap (Leaflet+Nominatim), public portal page with grouped category picker + anon logic + E2E tests (PUB-01, PUB-02, PUB-03, PUB-05)
 - [ ] 03-02-PLAN.md — POST /api/tickets (multipart+bytea media), lib/media.ts, Person auto-create, GET /api/media/[id], confirmation page + E2E tests (PUB-04, PUB-05, PUB-06)
 - [ ] 03-03-PLAN.md — GET /api/tickets/[id]/public (PII-filtered), GET /api/tickets/public-map (GeoJSON), PublicMap (markercluster), ticket detail page, map page + E2E tests (TRACK-01, TRACK-02)
+- [ ] 03-04-PLAN.md — [GAP] Fix start-dev.sh migration gate: bracket notation for db:migrate script key, add seed call; closes UAT category dropdown gap (PUB-01, PUB-02)
+- [ ] 03-05-PLAN.md — [GAP] Fix public ticket API to accept reference_id OR internal CUID in lookup; closes UAT Test 6 (TRACK-01)
 
 ### Phase 4: Open311 GeoReport v2 API
 **Goal**: Third-party integrators (mobile apps, 311 aggregators) can use all five GeoReport v2 endpoints over both JSON and XML exactly as they do against the legacy system, with API-key authentication on writes
