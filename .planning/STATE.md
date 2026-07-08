@@ -2,16 +2,16 @@
 pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-07-08T17:20:58.015Z"
-last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
+status: verifying
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-07-08T19:59:45.074Z"
+last_activity: "2026-07-08 — 04-01 complete: Open311 library layer built and tested"
 progress:
   total_phases: 7
-  completed_phases: 3
-  total_plans: 18
-  completed_plans: 17
-  percent: 71
+  completed_phases: 4
+  total_plans: 26
+  completed_plans: 19
+  percent: 94
 ---
 
 # Project State
@@ -66,6 +66,7 @@ Progress: [█████████░] 94%
 | Phase 03-public-portal-constituent-tracking P04 | 1min | 1 tasks | 1 files |
 | Phase 03-public-portal-constituent-tracking P05 | 1min | 2 tasks | 2 files |
 | Phase 04-open311-georeport-v2-api P01 | 2min | 2 tasks | 5 files |
+| Phase 05-staff-ticket-console P01 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,9 @@ Recent decisions affecting current work:
 - [Phase 03-public-portal-constituent-tracking]: findFirst with OR: [{ id }, { reference_id: id }] replaces findUnique for dual-key public ticket lookup
 - [Phase 04-open311-georeport-v2-api]: GeoReport v2 field 'long' not 'lng' — Open311 spec uses 'long'; internal Prisma model uses 'lng'; ticketToServiceRequest maps lng→long explicitly
 - [Phase 04-open311-georeport-v2-api]: Both missing and revoked API keys return 'key_not_found' — prevents enumeration of key existence (T-04-03 threat mitigation)
+- [Phase 05-staff-ticket-console]: FTS uses Prisma.sql template literals throughout — $queryRawUnsafe explicitly forbidden (T-05-02)
+- [Phase 05-staff-ticket-console]: Departments endpoint at /api/staff/departments (staff-auth) for FilterPanel dropdown — not public
+- [Phase 05-staff-ticket-console]: E2E staff login uses 'identifier' field (not username) and password Staff1234!secure from prisma/seed.ts
 
 ### Pending Todos
 
@@ -115,6 +119,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T17:20:58.014Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-07-08T19:59:45.073Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None
