@@ -99,7 +99,7 @@ Plans:
 - [ ] 04-02-PLAN.md — All five route handlers: `GET/POST /api/open311/requests`, `GET /api/open311/requests/[id]`, `GET /api/open311/services`, `GET /api/open311/services/[service_code]`
 
 ### Phase 5: Staff Ticket Console
-**Status**: awaiting verify
+**Status**: executing
 **Goal**: Authenticated staff can work the full ticket lifecycle — browse a filterable, searchable, bookmarkable queue; open a ticket detail; change status/substatus; assign to a department or person; post internal notes and public responses using templates; view the history timeline; and manage media attachments
 **Depends on**: Phase 2 (auth), Phase 1 (data model)
 **Requirements**: STAFF-01, STAFF-02, STAFF-03, STAFF-04, STAFF-05, STAFF-06, STAFF-07, STAFF-08, STAFF-09, STAFF-10, STAFF-11
