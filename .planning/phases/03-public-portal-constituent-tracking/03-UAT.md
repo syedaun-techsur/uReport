@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 03-public-portal-constituent-tracking
-source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md]
+source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md, 03-05-SUMMARY.md]
 started: 2026-07-08T15:57:00Z
-updated: 2026-07-08T16:02:00Z
+updated: 2026-07-08T16:40:00Z
 ---
 
 ## Current Test
@@ -34,9 +34,8 @@ result: pass
 
 ### 6. Ticket Lookup by ID
 expected: Navigate to /tickets/[id] with a known ticket ID — see the ticket's category, status, creation date, description, and address. No PII (email/phone/name) is exposed on this public page.
-result: issue
-reported: "404 page not found"
-severity: major
+result: pass
+note: "Gap closed by 03-05-PLAN.md (findFirst OR [{id},{reference_id}]). Re-verified by human UAT."
 
 ### 7. Public Map View
 expected: Navigate to /map and see a Leaflet map with clustered markers for open/in-progress tickets. Clicking a cluster zooms in. Clicking a pin opens a popup with a "View details" link.
@@ -45,8 +44,8 @@ result: pass
 ## Summary
 
 total: 7
-passed: 6
-issues: 1
+passed: 7
+issues: 0
 pending: 0
 skipped: 0
 
