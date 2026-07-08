@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 02-authentication-sessions
 source: [02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md]
 started: 2026-07-08T01:22:33Z
-updated: 2026-07-08T01:28:00Z
+updated: 2026-07-08T01:32:00Z
 ---
 
 ## Current Test
@@ -101,10 +101,15 @@ per_test:
   severity: blocker
   test: 2
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "AUTH_SECRET is not set in the sandbox environment; lib/auth.ts passes no secret: option to NextAuth() so it reads exclusively from process.env; Auth.js throws MissingSecret on every auth-route request causing the upstream proxy error"
+  artifacts:
+    - path: "lib/auth.ts"
+      issue: "NextAuth() called with no secret: option; relies entirely on AUTH_SECRET env var with no fallback"
+    - path: "scripts/migrate-and-start.js"
+      issue: "Validates AUTH_SECRET is present (exits if missing) but does not generate or inject it"
+  missing:
+    - "Create .env.local at project root with AUTH_SECRET=<32-byte random secret>"
+  debug_session: ".planning/debug/uat-login-missing-auth-secret.md"
 
 - truth: "Invalid credentials show a generic error message on the login form (no enumeration)"
   status: failed
@@ -112,10 +117,13 @@ per_test:
   severity: major
   test: 3
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Same root cause as Test 2: AUTH_SECRET missing causes Auth.js to redirect to /api/auth/error after the credentials authorize() callback runs, hitting the upstream proxy error before the user sees only the form error"
+  artifacts:
+    - path: "lib/auth.ts"
+      issue: "No AUTH_SECRET in env causes MissingSecret which intercepts the error redirect flow"
+  missing:
+    - "Same fix as Test 2: set AUTH_SECRET in .env.local"
+  debug_session: ".planning/debug/uat-login-missing-auth-secret.md"
 
 - truth: "Unauthenticated access to /staff/tickets redirects to /login with callbackUrl"
   status: failed
@@ -123,7 +131,10 @@ per_test:
   severity: blocker
   test: 6
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "When AUTH_SECRET is absent, @auth/core's assertConfig() returns a MissingSecret error object (not null); next-auth's handleAuth() JSON-parses the 500 error response body and assigns the truthy {message:'...'} object to req.auth, defeating the middleware's if(!session) guard"
+  artifacts:
+    - path: "middleware.ts"
+      issue: "Guard logic (if (!session)) is structurally correct but silently defeated — req.auth is set to a truthy error object by next-auth when AUTH_SECRET is missing"
+  missing:
+    - "Same fix: set AUTH_SECRET in .env.local — once set, getSession() returns null for unauthenticated requests and the redirect fires correctly"
+  debug_session: ".planning/debug/uat-gap-staff-redirect-missing-secret.md"
