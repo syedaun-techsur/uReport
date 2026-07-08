@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 02-authentication-sessions
 source: [02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md, 02-05-SUMMARY.md, 02-06-SUMMARY.md]
 started: 2026-07-08T01:57:30Z
@@ -100,9 +100,15 @@ per_test:
   severity: blocker
   test: 2
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "authorize() in lib/auth.ts looks up users by username field only; user submitted email address (admin@bloomington.in.gov) which finds no match. Secondary: DB was not yet migrated+seeded when user first tested. The login form label says 'Username' but AUTH-01 requirement says 'email/password' — inconsistency. Fix: update authorize() to accept either username OR email (OR query). Also ensure migrate-and-start.js runs at dev server boot."
+  artifacts:
+    - path: "lib/auth.ts"
+      issue: "authorize() queries WHERE username= only; does not accept email as an alternative login identifier"
+    - path: "app/login/page.tsx"
+      issue: "Form label says 'Username' but AUTH-01 requirement says email/password login"
+  missing:
+    - "Update authorize() in lib/auth.ts to do OR lookup: WHERE username=X OR email=X (case-insensitive)"
+    - "Update login form label to say 'Username or email' or pick one canonical identifier"
   debug_session: ""
 
 - truth: "After logging in, session persists across browser refresh and user remains on /staff/tickets"
@@ -111,9 +117,12 @@ per_test:
   severity: blocker
   test: 4
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "All Auth.js cookies (sessionToken, csrfToken, callbackUrl) use SameSite=Lax. In the cross-site Pivota preview iframe, browsers drop all SameSite=Lax cookies, causing MissingCSRF on login POST and session invisibility on protected routes — creating a redirect loop that renders as a blank screen. lib/auth.ts only overrides sessionToken (still SameSite=Lax); csrfToken and callbackUrl fall back to Auth.js defaults (also SameSite=Lax). Fix: override all three cookies to sameSite:'none', secure:true."
+  artifacts:
+    - path: "lib/auth.ts"
+      issue: "cookies config only overrides sessionToken with sameSite:'lax'; csrfToken and callbackUrl not overridden, both default to SameSite=Lax — all three are dropped in cross-site iframe"
+  missing:
+    - "In lib/auth.ts cookies config, override sessionToken, csrfToken, and callbackUrl to sameSite:'none', secure:true for Pivota iframe compatibility"
   debug_session: ""
 
 - truth: "Navigating to /staff/tickets without a session redirects to /login with callbackUrl"
@@ -122,8 +131,11 @@ per_test:
   severity: blocker
   test: 6
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Same root cause as Test 4: SameSite=Lax cookies dropped in iframe. The 307 redirect to /login IS happening (curl confirms it), but once the browser lands on /login, the CSRF cookie is also dropped so the login form cannot complete — creating a blank redirect loop. This is the same cookie fix as Test 4."
+  artifacts:
+    - path: "lib/auth.ts"
+      issue: "Same as Test 4 — all Auth.js cookies are SameSite=Lax, dropped in cross-site iframe"
+  missing:
+    - "Same fix as Test 4: override all Auth.js cookies to sameSite:'none', secure:true"
   debug_session: ""
 
