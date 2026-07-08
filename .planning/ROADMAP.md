@@ -79,6 +79,7 @@ Plans:
 - [ ] 03-02-PLAN.md — POST /api/tickets (multipart+bytea media), lib/media.ts, Person auto-create, GET /api/media/[id], confirmation page + E2E tests (PUB-04, PUB-05, PUB-06)
 - [ ] 03-03-PLAN.md — GET /api/tickets/[id]/public (PII-filtered), GET /api/tickets/public-map (GeoJSON), PublicMap (markercluster), ticket detail page, map page + E2E tests (TRACK-01, TRACK-02)
 - [ ] 03-04-PLAN.md — [GAP] Fix start-dev.sh migration gate: bracket notation for db:migrate script key, add seed call; closes UAT category dropdown gap (PUB-01, PUB-02)
+- [ ] 03-05-PLAN.md — [GAP] Fix public ticket API to accept reference_id OR internal CUID in lookup; closes UAT Test 6 (TRACK-01)
 
 ### Phase 4: Open311 GeoReport v2 API
 **Goal**: Third-party integrators (mobile apps, 311 aggregators) can use all five GeoReport v2 endpoints over both JSON and XML exactly as they do against the legacy system, with API-key authentication on writes
