@@ -103,9 +103,15 @@ test.describe('Logout (AUTH-03)', () => {
     await page.click('[data-testid="login-submit"]');
     await expect(page).toHaveURL(/\/staff\/tickets/, { timeout: 10000 });
 
-    // POST to signOut endpoint (simulates logout button action)
-    await page.goto('/api/auth/signout');
-    // After signout, visiting protected route should redirect to login
+    // Click the real logout button in the staff layout nav
+    const logoutBtn = page.locator('[data-testid="logout-btn"]');
+    await expect(logoutBtn).toBeVisible({ timeout: 5000 });
+    await logoutBtn.click();
+
+    // After signOut with callbackUrl='/login', should land on login page
+    await expect(page).toHaveURL(/\/login/, { timeout: 10000 });
+
+    // Visiting protected route should redirect back to login (session is cleared)
     await page.goto('/staff/tickets');
     await expect(page).toHaveURL(/\/login/, { timeout: 5000 });
   });
