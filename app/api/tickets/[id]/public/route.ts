@@ -7,8 +7,13 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const ticket = await prisma.ticket.findUnique({
-      where: { id },
+    const ticket = await prisma.ticket.findFirst({
+      where: {
+        OR: [
+          { id },
+          { reference_id: id },
+        ],
+      },
       include: {
         category: { select: { id: true, name: true, service_code: true } },
         substatus: { select: { id: true, label: true } },
