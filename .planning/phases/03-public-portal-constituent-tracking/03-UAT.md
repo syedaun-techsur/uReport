@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 03-public-portal-constituent-tracking
 source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md]
 started: 2026-07-08T14:26:32Z
@@ -90,9 +90,14 @@ per_test:
   severity: major
   test: 1
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "start-dev.sh pre-exec migration check uses `scripts?.migrate` but project declares script as `db:migrate` — condition evaluates falsy, migration never runs at boot, DB tables don't exist, /api/categories returns 500, categories array empty in frontend"
+  artifacts:
+    - path: ".pivota/start-dev.sh"
+      issue: "node -e \"process.exit(require('./package.json').scripts?.migrate?0:1)\" tests for 'migrate' key but package.json has 'db:migrate' — fix: check for 'db:migrate' OR run `npx prisma migrate deploy` unconditionally when DATABASE_URL is set"
+    - path: "package.json"
+      issue: "scripts.db:migrate = 'prisma migrate deploy' — the correct key is db:migrate not migrate"
+  missing:
+    - "Update start-dev.sh pre-exec migration check to handle db:migrate script name (or run prisma migrate deploy + seed directly when DATABASE_URL is present)"
   debug_session: ""
 - truth: "Submitting the report form with a selected category creates a ticket and redirects to confirmation"
   status: failed
@@ -100,7 +105,10 @@ per_test:
   severity: major
   test: 2
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Same as Test 1 — empty category list caused by missing DB migration at boot. Form client-side validation rejects submit with no category selected."
+  artifacts:
+    - path: ".pivota/start-dev.sh"
+      issue: "Same migrate script name mismatch as Test 1 gap"
+  missing:
+    - "Fix start-dev.sh migration step (same fix as Test 1)"
   debug_session: ""
