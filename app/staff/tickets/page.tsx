@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FilterPanel } from '@/components/tickets/FilterPanel';
 import { TicketTable } from '@/components/tickets/TicketTable';
+import { BookmarkBar } from '@/components/tickets/BookmarkBar';
 import type { TicketSummary, PaginationMeta } from '@/types/domain';
 import { Suspense } from 'react';
 
@@ -70,6 +71,14 @@ function StaffTicketsContent() {
     router.push(`/staff/tickets?${params.toString()}`);
   }
 
+  // Convert current search params to a plain object for BookmarkBar
+  const currentParams = Object.fromEntries(searchParams.entries());
+
+  // Called when a bookmark is loaded — replace all URL params with bookmark's filter_json
+  function handleBookmarkLoad(filters: Record<string, string>) {
+    router.push('/staff/tickets?' + new URLSearchParams(filters).toString());
+  }
+
   return (
     <main className="flex flex-col gap-4 p-6">
       <div className="flex items-center justify-between">
@@ -80,6 +89,8 @@ function StaffTicketsContent() {
           </span>
         )}
       </div>
+
+      <BookmarkBar currentFilters={currentParams} onLoad={handleBookmarkLoad} />
 
       <FilterPanel />
 
