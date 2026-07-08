@@ -1,11 +1,11 @@
 {
   "generator_version": "init-dev-server@1",
   "catalog_entry": "react-next",
-  "generated_at": "2026-07-08T14:23:10Z",
-  "inspection_inputs_hash": "0b4fa358c0aaeea93514bc1586f6ae373c30ed7e2295b6778f8d63bd11d968ce",
+  "generated_at": "2026-07-08T15:53:30Z",
+  "inspection_inputs_hash": "7c5feb79e81f1c93acb8a1e9abb76709cc747c7e227725e17b22dc754dd7dd45",
   "inspection_inputs": {
     "matched_globs": [
-      "next.config.ts",
+      "next.config.*",
       "package.json"
     ],
     "manifest_signatures": [
