@@ -30,6 +30,11 @@ export default function LoginPage() {
     setServerError(null);
     setIsPending(true);
 
+    // First try with redirect: false to catch credential errors inline.
+    // If credentials are valid, Auth.js returns result.ok = true and result.url.
+    // Then we hard-navigate to the callbackUrl so the browser sends the session
+    // cookie on a fresh full-page request (client-side router.push doesn't work
+    // through the Pivota preview proxy — the middleware never sees the request).
     const result = await signIn('credentials', {
       username: data.username,
       password: data.password,
@@ -38,17 +43,19 @@ export default function LoginPage() {
 
     setIsPending(false);
 
-    if (result?.error) {
+    if (!result?.ok || result?.error) {
       // Generic message — never leak whether username or password was wrong
       setServerError('Invalid username or password');
       return;
     }
 
-    // Use window.location for full navigation — next/navigation router.push
-    // does a client-side soft nav that doesn't reach the server through the
-    // Pivota preview proxy (middleware never sees the request). Hard redirect
-    // ensures the session cookie is sent with a fresh request.
-    window.location.href = callbackUrl;
+    // Auth succeeded — navigate via form submission to ensure proxy-compatible redirect.
+    // This creates a GET request the proxy can follow and sets the cookie correctly.
+    const form = document.createElement('form');
+    form.method = 'GET';
+    form.action = callbackUrl;
+    document.body.appendChild(form);
+    form.submit();
   }
 
   return (
