@@ -155,7 +155,8 @@ export default function PublicPortalPage() {
 
       if (res.ok) {
         const data = await res.json();
-        router.push(`/tickets/${data.ticket_id}/confirm`);
+        const confirmUrl = `/tickets/${data.ticket_id}/confirm?reference_id=${encodeURIComponent(data.reference_id)}&category_name=${encodeURIComponent(data.category_name)}`;
+        router.push(confirmUrl);
       } else {
         const err = await res.json().catch(() => ({}));
         setSubmitError(err?.error || 'Failed to submit report. Please try again.');
