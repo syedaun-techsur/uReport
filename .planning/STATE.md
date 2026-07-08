@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-05-PLAN.md
-last_updated: "2026-07-08T16:30:57.071Z"
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-07-08T17:20:58.015Z"
 last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
 progress:
   total_phases: 7
   completed_phases: 3
-  total_plans: 16
-  completed_plans: 16
+  total_plans: 18
+  completed_plans: 17
   percent: 71
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** City constituents can report municipal issues and staff can manage the full ticket lifecycle — all from one responsive, accessible web app running as a single Kubernetes pod with a Postgres sidecar.
-**Current focus:** Phase 2 — Authentication & Sessions
+**Current focus:** Phase 4 — Open311 GeoReport v2 API
 
 ## Current Position
 
-Phase: 2 of 7 (Authentication & Sessions) — COMPLETE
-Plan: 8 of 8 in current phase (all done: 02-01, 02-02, 02-03, 02-04, 02-05, 02-06, 02-07, 02-08)
-Status: Phase 2 complete — auth provider, middleware, seed fix, staff/tickets placeholder, staff layout + logout button, dev DB migrate+seed all done
-Last activity: 2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)
+Phase: 4 of 7 (Open311 GeoReport v2 API) — IN PROGRESS
+Plan: 1 of 1 completed (04-01 done; 04-02 next)
+Status: Phase 4 Plan 1 complete — Open311 types, Zod schemas, rate limiter, field mapper, XML serializer, API key verifier + 28 Vitest tests all passing
+Last activity: 2026-07-08 — 04-01 complete: Open311 library layer built and tested
 
-Progress: [███████░░░] 71%
+Progress: [█████████░] 94%
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@ Progress: [███████░░░] 71%
 | Phase 03-public-portal-constituent-tracking P01 | 5min | 2 tasks | 7 files |
 | Phase 03-public-portal-constituent-tracking P04 | 1min | 1 tasks | 1 files |
 | Phase 03-public-portal-constituent-tracking P05 | 1min | 2 tasks | 2 files |
+| Phase 04-open311-georeport-v2-api P01 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 03-public-portal-constituent-tracking]: GET /api/categories includes group_name via CategoryGroup join — avoids separate API call from frontend category picker
 - [Phase 03-public-portal-constituent-tracking]: Bracket notation scripts?.['db:migrate'] required for colon-containing npm script keys in Node.js inline -e expressions
 - [Phase 03-public-portal-constituent-tracking]: findFirst with OR: [{ id }, { reference_id: id }] replaces findUnique for dual-key public ticket lookup
+- [Phase 04-open311-georeport-v2-api]: GeoReport v2 field 'long' not 'lng' — Open311 spec uses 'long'; internal Prisma model uses 'lng'; ticketToServiceRequest maps lng→long explicitly
+- [Phase 04-open311-georeport-v2-api]: Both missing and revoked API keys return 'key_not_found' — prevents enumeration of key existence (T-04-03 threat mitigation)
 
 ### Pending Todos
 
@@ -112,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T16:30:57.070Z
-Stopped at: Completed 03-05-PLAN.md
+Last session: 2026-07-08T17:20:58.014Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
