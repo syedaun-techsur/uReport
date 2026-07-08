@@ -21,14 +21,16 @@ export function apiError(
   );
 }
 
-// Auth guard helper — used in route handlers (not middleware)
+// Auth guard helper — used in route handlers (not middleware).
+// TechArch §4.6: requireSession checks session then role.
+// Returns Session on success; returns NextResponse on failure (caller must return it).
 export async function requireSession(
   role: 'staff' | 'admin' = 'staff'
 ): Promise<Session | NextResponse> {
   const session = await auth();
   if (!session) return apiError('UNAUTHORIZED', 'Authentication required', 401);
-  if (role === 'admin' && (session as Session & { user: { role?: string } }).user.role !== 'admin') {
+  if (role === 'admin' && session.user.role !== 'admin') {
     return apiError('FORBIDDEN', 'Admin access required', 403);
   }
-  return session as Session;
+  return session;
 }

@@ -13,7 +13,9 @@ function currentLevel(): number {
 
 function write(level: LogLevel, obj: object) {
   if (LEVELS[level] < currentLevel()) return;
-  process.stdout.write(JSON.stringify({ level, timestamp: new Date().toISOString(), ...obj }) + '\n');
+  // Use console.log instead of process.stdout.write — Edge Runtime compatible.
+  // (middleware.ts → lib/auth.ts → lib/logger.ts gets bundled for Edge; process.stdout is Node-only)
+  console.log(JSON.stringify({ level, timestamp: new Date().toISOString(), ...obj }));
 }
 
 export const log = {

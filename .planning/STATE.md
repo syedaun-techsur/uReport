@@ -2,16 +2,16 @@
 pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase_complete
-stopped_at: Completed 01-k8s-scaffold-data-foundation-03-PLAN.md
-last_updated: "2026-07-07T17:00:00.000Z"
-last_activity: "2026-07-07 — Phase 1 complete: all 3 plans done (scaffold, schema, health endpoints)"
+status: completed
+stopped_at: Completed 02-07-PLAN.md
+last_updated: "2026-07-08T02:35:25.951Z"
+last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
 progress:
   total_phases: 7
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 3
-  percent: 43
+  completed_phases: 2
+  total_plans: 14
+  completed_plans: 11
+  percent: 71
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** City constituents can report municipal issues and staff can manage the full ticket lifecycle — all from one responsive, accessible web app running as a single Kubernetes pod with a Postgres sidecar.
-**Current focus:** Phase 1 — K8s Scaffold & Data Foundation
+**Current focus:** Phase 2 — Authentication & Sessions
 
 ## Current Position
 
-Phase: 1 of 7 (K8s Scaffold & Data Foundation) — COMPLETE
-Plan: 3 of 3 in current phase (all done)
-Status: Phase 1 complete — ready for Phase 2
-Last activity: 2026-07-07 — Phase 1 complete: scaffold + schema + health endpoints, all 5 success criteria verified
+Phase: 2 of 7 (Authentication & Sessions) — COMPLETE
+Plan: 8 of 8 in current phase (all done: 02-01, 02-02, 02-03, 02-04, 02-05, 02-06, 02-07, 02-08)
+Status: Phase 2 complete — auth provider, middleware, seed fix, staff/tickets placeholder, staff layout + logout button, dev DB migrate+seed all done
+Last activity: 2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)
 
-Progress: [████░░░░░░] 40%
+Progress: [███████░░░] 71%
 
 ## Performance Metrics
 
@@ -54,6 +54,13 @@ Progress: [████░░░░░░] 40%
 
 *Updated after each plan completion*
 | Phase 01-k8s-scaffold-data-foundation P03 | 2min | 2 tasks | 8 files |
+| Phase 02-authentication-sessions P01 | 3min | 2 tasks | 6 files |
+| Phase 02-authentication-sessions P03 | 1min | 1 tasks | 1 files |
+| Phase 02-authentication-sessions P04 | 1min | 2 tasks | 2 files |
+| Phase 02-authentication-sessions P05 | 1min | 2 tasks | 2 files |
+| Phase 02-authentication-sessions P06 | 1min | 2 tasks | 3 files |
+| Phase 02-authentication-sessions P08 | 1min | 1 tasks | 1 files |
+| Phase 02-authentication-sessions P07 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -73,6 +80,16 @@ Recent decisions affecting current work:
 - [Phase 01-k8s-scaffold-data-foundation]: search_vector tsvector NOT in Prisma schema — added via ALTER TABLE in migration SQL (Prisma cannot represent tsvector natively)
 - [Phase 01-k8s-scaffold-data-foundation]: FTS: 'english' dictionary for Ticket (stemming), 'simple' for Person (email/phone digits must not be stripped)
 - [Phase 01-k8s-scaffold-data-foundation]: PostGIS migration uses DO $$ conditional block — silently skips geog column when PostGIS extension absent
+- [Phase 02-authentication-sessions]: Credentials-only auth (no OAuth) — staff/admin are internal city employees
+- [Phase 02-authentication-sessions]: token_version invalidation on every JWT decode — accepted for v1 (T-02-06)
+- [Phase 02-authentication-sessions]: Generic 'Invalid username or password' error — prevents credential enumeration (T-02-02)
+- [Phase 02-authentication-sessions]: Auto-seed on empty DB (user count = 0) rather than requiring SEED_ON_BOOT=true — eliminates UAT gap where all 8 auth tests failed on fresh DB
+- [Phase 02-authentication-sessions]: Placeholder page required for middleware interception — Next.js returns 404 before middleware fires when page file is missing — Creating app/staff/tickets/page.tsx is the minimal fix for both Gap 2 and Gap 3
+- [Phase 02-authentication-sessions]: AUTH_SECRET generated via openssl rand -hex 32 and placed in gitignored .env.local; .env.example committed as discoverable documentation
+- [Phase 02-authentication-sessions]: signOut imported from next-auth/react (client) not @/lib/auth (server-only) — correct client-side path for next-auth v5 beta
+- [Phase 02-authentication-sessions]: Migrate+seed block placed below END PIVOTA PREAMBLE marker in start-dev.sh preserved region — survives start-dev.sh regeneration by START-DEV workflow
+- [Phase 02-authentication-sessions]: SameSite=None; Secure applied unconditionally (not gated on NODE_ENV=production) — required for preview iframe; Pivota preview always runs over HTTPS
+- [Phase 02-authentication-sessions]: csrfToken and callbackUrl cookies NOT httpOnly — Auth.js client-side signIn() must JS-read the CSRF token; httpOnly breaks every sign-in with CSRF mismatch
 
 ### Pending Todos
 
@@ -84,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-07T16:42:02.467Z
-Stopped at: Completed 01-k8s-scaffold-data-foundation-02-PLAN.md
+Last session: 2026-07-08T02:35:25.949Z
+Stopped at: Completed 02-07-PLAN.md
 Resume file: None

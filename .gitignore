@@ -149,3 +149,5 @@ opencode.json.bak
 AGENTS.md
 .opencode.session
 # <<< pivota:gitignore-managed
+.env.local
+.env*.local
