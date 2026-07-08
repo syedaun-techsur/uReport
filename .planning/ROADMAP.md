@@ -50,13 +50,14 @@ Plans:
   2. A logged-in user's session survives a browser refresh; navigating to `/staff/tickets` without a session redirects to `/login?callbackUrl=...`
   3. A logged-in user can click "Log out" from any page and their session cookie is cleared
   4. A `staff`-role user attempting to access `/admin/**` receives a 403 redirect; an `admin`-role user can access both `/staff/**` and `/admin/**`
-**Plans**: 4 plans
+**Plans**: 5 plans
 
 Plans:
 - [ ] 02-01-PLAN.md — Auth.js v5 credentials provider (lib/auth.ts), Zod schemas, catch-all route handler, login page + Playwright E2E tests (AUTH-01, AUTH-02, AUTH-03)
 - [ ] 02-02-PLAN.md — Middleware route guards for /staff/** and /admin/**, requireSession helper, password change API + UI + Playwright E2E tests (AUTH-04)
 - [ ] 02-03-PLAN.md — [GAP] Auto-seed on empty DB: unconditional seed when users table is empty (scripts/migrate-and-start.js), fixes UAT Gap 1 (AUTH-01)
 - [ ] 02-04-PLAN.md — [GAP] Minimal /staff/tickets placeholder page so middleware can intercept unauthenticated requests (AUTH-01, AUTH-04), fixes UAT Gaps 2 & 3
+- [ ] 02-05-PLAN.md — [GAP] Create .env.local with AUTH_SECRET + .env.example; fixes UAT Tests 2, 3, 6 (MissingSecret root cause)
 
 ### Phase 3: Public Portal & Constituent Tracking
 **Goal**: Any city resident can report a municipal issue using a map-first form (pin or address, category, description, optional photo and contact), receive a ticket ID, and later look up that ticket's status or view all open issues on a public map — all without logging in
