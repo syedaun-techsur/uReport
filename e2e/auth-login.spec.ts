@@ -7,20 +7,20 @@ import { test, expect } from '@playwright/test';
 // In CI, set STAFF_USERNAME/STAFF_PASSWORD/ADMIN_PASSWORD env vars to match seed.
 
 const STAFF_USERNAME = process.env.STAFF_USERNAME ?? 'staff';
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!secure';
+const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!seed';
 
 test.describe('Login page', () => {
   test('renders login form with username and password fields', async ({ page }) => {
     await page.goto('/login');
     await expect(page.locator('[data-testid="login-form"]')).toBeVisible();
-    await expect(page.locator('input[aria-label="Username"]')).toBeVisible();
+    await expect(page.locator('input[aria-label="Username or email"]')).toBeVisible();
     await expect(page.locator('input[aria-label="Password"]')).toBeVisible();
     await expect(page.locator('[data-testid="login-submit"]')).toBeVisible();
   });
 
   test('shows generic error message for invalid credentials', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[aria-label="Username"]', 'nonexistent_user');
+    await page.fill('input[aria-label="Username or email"]', 'nonexistent_user');
     await page.fill('input[aria-label="Password"]', 'WrongPassword123!');
     await page.click('[data-testid="login-submit"]');
 
@@ -34,7 +34,7 @@ test.describe('Login page', () => {
 
   test('shows error for wrong password on existing user', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[aria-label="Username"]', STAFF_USERNAME);
+    await page.fill('input[aria-label="Username or email"]', STAFF_USERNAME);
     await page.fill('input[aria-label="Password"]', 'DefinitelyWrongPw999!');
     await page.click('[data-testid="login-submit"]');
 
@@ -45,7 +45,7 @@ test.describe('Login page', () => {
 
   test('successful login redirects to /staff/tickets', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[aria-label="Username"]', STAFF_USERNAME);
+    await page.fill('input[aria-label="Username or email"]', STAFF_USERNAME);
     await page.fill('input[aria-label="Password"]', STAFF_PASSWORD);
     await page.click('[data-testid="login-submit"]');
 
@@ -53,9 +53,20 @@ test.describe('Login page', () => {
     await expect(page).toHaveURL(/\/staff\/tickets/, { timeout: 10000 });
   });
 
+  test('can log in with email address instead of username', async ({ page }) => {
+    // UAT Test 2: auth must accept email as the login identifier
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'admin@example.com';
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'Admin1234!seed';
+    await page.goto('/login');
+    await page.fill('input[aria-label="Username or email"]', ADMIN_EMAIL);
+    await page.fill('input[aria-label="Password"]', ADMIN_PASSWORD);
+    await page.click('[data-testid="login-submit"]');
+    await expect(page).toHaveURL(/\/staff\/tickets/, { timeout: 10000 });
+  });
+
   test('preserves callbackUrl after successful login', async ({ page }) => {
     await page.goto('/login?callbackUrl=/staff/tickets');
-    await page.fill('input[aria-label="Username"]', STAFF_USERNAME);
+    await page.fill('input[aria-label="Username or email"]', STAFF_USERNAME);
     await page.fill('input[aria-label="Password"]', STAFF_PASSWORD);
     await page.click('[data-testid="login-submit"]');
 
@@ -64,7 +75,7 @@ test.describe('Login page', () => {
 
   test('submit button is disabled while signing in', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('input[aria-label="Username"]', STAFF_USERNAME);
+    await page.fill('input[aria-label="Username or email"]', STAFF_USERNAME);
     await page.fill('input[aria-label="Password"]', STAFF_PASSWORD);
 
     // Click and immediately check disabled state
@@ -81,7 +92,7 @@ test.describe('Session persistence (AUTH-02)', () => {
   test('session survives page reload after login', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('input[aria-label="Username"]', STAFF_USERNAME);
+    await page.fill('input[aria-label="Username or email"]', STAFF_USERNAME);
     await page.fill('input[aria-label="Password"]', STAFF_PASSWORD);
     await page.click('[data-testid="login-submit"]');
     await expect(page).toHaveURL(/\/staff\/tickets/, { timeout: 10000 });
@@ -98,7 +109,7 @@ test.describe('Logout (AUTH-03)', () => {
   test('logout clears session and redirects to login', async ({ page }) => {
     // Login first
     await page.goto('/login');
-    await page.fill('input[aria-label="Username"]', STAFF_USERNAME);
+    await page.fill('input[aria-label="Username or email"]', STAFF_USERNAME);
     await page.fill('input[aria-label="Password"]', STAFF_PASSWORD);
     await page.click('[data-testid="login-submit"]');
     await expect(page).toHaveURL(/\/staff\/tickets/, { timeout: 10000 });

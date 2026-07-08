@@ -36,7 +36,7 @@ export default function LoginPage() {
     // cookie on a fresh full-page request (client-side router.push doesn't work
     // through the Pivota preview proxy — the middleware never sees the request).
     const result = await signIn('credentials', {
-      username: data.username,
+      identifier: data.identifier,
       password: data.password,
       redirect: false,
     });
@@ -68,20 +68,20 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="login-form">
           <div className="space-y-1">
-            <label htmlFor="username" className="text-sm font-medium">
-              Username
+            <label htmlFor="identifier" className="text-sm font-medium">
+              Username or email
             </label>
             <input
-              id="username"
+              id="identifier"
               type="text"
               autoComplete="username"
-              aria-label="Username"
+              aria-label="Username or email"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              {...register('username')}
+              {...register('identifier')}
             />
-            {errors.username && (
+            {errors.identifier && (
               <p className="text-sm text-destructive" role="alert">
-                {errors.username.message}
+                {errors.identifier.message}
               </p>
             )}
           </div>
