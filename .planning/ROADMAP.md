@@ -82,7 +82,7 @@ Plans:
 - [ ] 03-05-PLAN.md — [GAP] Fix public ticket API to accept reference_id OR internal CUID in lookup; closes UAT Test 6 (TRACK-01)
 
 ### Phase 4: Open311 GeoReport v2 API
-**Status**: awaiting verify
+**Status**: executing
 **Goal**: Third-party integrators (mobile apps, 311 aggregators) can use all five GeoReport v2 endpoints over both JSON and XML exactly as they do against the legacy system, with API-key authentication on writes
 **Depends on**: Phase 1 (Ticket model, Category model, ApiKey model)
 **Requirements**: O311-01, O311-02, O311-03, O311-04, O311-05, O311-06, O311-07
