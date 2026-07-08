@@ -1,4 +1,10 @@
 // middleware.ts
+// MUST run in Node.js runtime — auth.ts calls Prisma (Node.js TCP) for
+// token_version invalidation inside the jwt() callback. The Edge Runtime
+// does not support Node.js TCP sockets (PrismaClient). Running in 'nodejs'
+// gives full Node.js access while still intercepting all matched routes.
+export const runtime = 'nodejs';
+
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 
