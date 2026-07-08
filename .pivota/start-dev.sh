@@ -230,3 +230,29 @@ exit 1
 # Below this marker, projects may add custom shutdown / setup logic.
 # This region is PRESERVED across regenerations (plan 06's regen logic detects
 # the marker and re-appends user content verbatim after re-emitting the preamble).
+
+# === Pre-launch: migrate + seed (dev-mode DB prep) ===
+# PROJECT-OWNED: preserved below END PIVOTA PREAMBLE — do not remove on regen.
+# Mirrors scripts/migrate-and-start.js for the 'npm run dev' path.
+# Runs prisma migrate deploy (idempotent) then seeds if User table is empty.
+# Skipped entirely when DATABASE_URL is not set (no sidecar / compose DB).
+if [ -n "${DATABASE_URL:-}" ]; then
+  echo "[pivota-dev-db] Running prisma migrate deploy..."
+  npx prisma migrate deploy || echo "[pivota-dev-db] migrate non-zero (may be OK if schema already current)"
+
+  echo "[pivota-dev-db] Checking if seed is needed..."
+  USER_COUNT=$(node -e "
+    const { Client } = require('pg');
+    const c = new Client({ connectionString: process.env.DATABASE_URL });
+    c.connect()
+      .then(() => c.query('SELECT COUNT(*)::int AS cnt FROM \"User\"'))
+      .then(r => { console.log(r.rows[0].cnt); return c.end(); })
+      .catch(() => { console.log('0'); });
+  " 2>/dev/null) || USER_COUNT=0
+  if [ "${USER_COUNT:-0}" -eq 0 ]; then
+    echo "[pivota-dev-db] Empty DB — running seed..."
+    npx tsx prisma/seed.ts || echo "[pivota-dev-db] seed non-zero (check seed output above)"
+  else
+    echo "[pivota-dev-db] Seed skipped — ${USER_COUNT} user(s) already exist."
+  fi
+fi
