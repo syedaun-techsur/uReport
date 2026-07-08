@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 // In CI, set STAFF_USERNAME/STAFF_PASSWORD/ADMIN_PASSWORD env vars to match seed.
 
 const STAFF_USERNAME = process.env.STAFF_USERNAME ?? 'staff';
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!seed';
+const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!secure';
 
 test.describe('Login page', () => {
   test('renders login form with username and password fields', async ({ page }) => {

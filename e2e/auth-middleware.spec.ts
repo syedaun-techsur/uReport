@@ -2,9 +2,9 @@
 import { test, expect } from '@playwright/test';
 
 const STAFF_USERNAME = process.env.STAFF_USERNAME ?? 'staff';
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!seed';
+const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!secure';
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME ?? 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'Admin1234!seed';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'Admin1234!secure';
 
 // Helper: log in as a given user
 async function loginAs(page: import('@playwright/test').Page, username: string, password: string) {

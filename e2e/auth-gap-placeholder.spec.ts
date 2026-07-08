@@ -3,7 +3,7 @@
 // Requires: running app with seeded users (Plan 02-03 seed fix)
 import { test, expect } from '@playwright/test';
 
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!seed';
+const STAFF_PASSWORD = process.env.STAFF_PASSWORD ?? 'Staff1234!secure';
 
 test.describe('Gap closure: /staff/tickets placeholder', () => {
   test('unauthenticated request to /staff/tickets redirects to /login with callbackUrl', async ({ page }) => {
