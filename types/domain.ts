@@ -94,6 +94,7 @@ export interface CategoryRecord {
   anon_allowed: boolean;
   active: boolean;
   group_id: string | null;
+  group_name?: string | null;
   department_id: string | null;
   department_name: string | null;
 }
