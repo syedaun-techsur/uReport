@@ -126,13 +126,13 @@ Plans:
   3. An admin can generate an Open311 API key (plaintext shown once), assign it a label and scope, and revoke it — revoked keys immediately return 401
   4. A staff user can search for a Person by name, email, or phone; view their full ticket history; link or unlink a ticket; create/edit contact details; and flag potential duplicates for merge
   5. A staff user can merge two Person records (all TicketPerson rows re-pointed to canonical record) and anonymize a Person record on GDPR request
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 06-01: Admin categories, departments, substatuses, response templates (CRUD + deactivate + audit log)
-- [ ] 06-02: Admin user management, API key management, AdminAuditLog viewer
-- [ ] 06-03: CRM — Person search, detail, create/edit, link/unlink to ticket, duplicate flag
-- [ ] 06-04: CRM — merge persons, anonymize, GDPR workflow
+- [ ] 06-01-PLAN.md — Admin reference data CRUD: Categories (with CategoryGroup from seed, anon_allowed), Departments, Substatuses, ResponseTemplates — all mutations log to AdminAuditLog
+- [ ] 06-02-PLAN.md — Admin user management (create, deactivate, reset password + token_version), API key management (SHA-256, plaintext once, revoke), AdminAuditLog viewer
+- [ ] 06-03-PLAN.md — CRM Person search (FTS), detail + ticket history, create/edit, link/unlink to ticket (TicketPerson + TicketHistory), duplicate flag
+- [ ] 06-04-PLAN.md — CRM merge persons (re-point all TicketPerson rows in transaction), anonymize (GDPR: null PII + set anonymized_at + TicketHistory)
 
 ### Phase 7: Reports & Metrics Dashboard
 **Goal**: Authenticated staff and admins can view a metrics dashboard showing ticket volume by category and department, open/closed breakdown with average resolution time, and a geographic density map — all over a configurable date range
