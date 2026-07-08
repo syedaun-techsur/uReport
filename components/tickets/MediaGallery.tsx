@@ -1,5 +1,6 @@
 'use client';
-import { FileIcon } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { FileIcon, UploadCloudIcon, Loader2Icon } from 'lucide-react';
 import type { MediaRecord } from '@/types/domain';
 
 function formatFileSize(bytes: number): string {
@@ -11,11 +12,62 @@ function formatFileSize(bytes: number): string {
 interface MediaGalleryProps {
   media: MediaRecord[];
   ticketId: string;
+  onUploadSuccess?: () => void;
 }
 
-export function MediaGallery({ media, ticketId: _ticketId }: MediaGalleryProps) {
+export function MediaGallery({ media, ticketId, onUploadSuccess }: MediaGalleryProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    const formData = new FormData();
+    for (const file of Array.from(files)) {
+      formData.append('files', file);
+    }
+
+    try {
+      const res = await fetch(`/api/staff/tickets/${ticketId}/media`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const message = (data as { error?: { message?: string; code?: string } })?.error?.message;
+        const code = (data as { error?: { code?: string } })?.error?.code;
+
+        if (code === 'MEDIA_TOO_LARGE') {
+          setUploadError('One or more files exceed the 10MB limit.');
+        } else if (code === 'MEDIA_TYPE_INVALID') {
+          setUploadError('Only images and PDF files are accepted.');
+        } else if (code === 'MEDIA_TOO_MANY') {
+          setUploadError('Maximum 5 files per upload.');
+        } else {
+          setUploadError(message ?? 'Upload failed. Please try again.');
+        }
+        return;
+      }
+
+      // Reset input and trigger parent refetch
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      onUploadSuccess?.();
+    } catch {
+      setUploadError('Network error. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  }
+
   return (
     <div>
+      {/* Media grid */}
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
         {media.map((m) => {
           const url = `/api/media/${m.id}`;
@@ -63,16 +115,49 @@ export function MediaGallery({ media, ticketId: _ticketId }: MediaGalleryProps) 
         )}
       </div>
 
-      {/* Placeholder button for plan 05-04 (upload functionality) */}
-      <button
-        data-testid="add-media-btn"
-        type="button"
-        className="mt-3 hidden rounded border border-dashed border-gray-300 px-4 py-2 text-sm text-gray-400 hover:border-blue-400 hover:text-blue-500"
-        disabled
-        aria-hidden="true"
-      >
-        + Add media
-      </button>
+      {/* Upload area */}
+      <div className="mt-4">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,application/pdf"
+          multiple
+          data-testid="media-upload-input"
+          className="sr-only"
+          id={`media-upload-${ticketId}`}
+          onChange={handleFileChange}
+          disabled={uploading}
+        />
+        <label
+          htmlFor={`media-upload-${ticketId}`}
+          className={`flex cursor-pointer items-center justify-center gap-2 rounded-md border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-500 transition-colors hover:border-blue-400 hover:text-blue-600 ${
+            uploading ? 'cursor-not-allowed opacity-50' : ''
+          }`}
+        >
+          {uploading ? (
+            <>
+              <Loader2Icon className="h-4 w-4 animate-spin" />
+              <span>Uploading…</span>
+            </>
+          ) : (
+            <>
+              <UploadCloudIcon className="h-4 w-4" />
+              <span>Add media (images or PDF, max 10MB each, up to 5 files)</span>
+            </>
+          )}
+        </label>
+
+        {/* Upload error */}
+        {uploadError && (
+          <p
+            data-testid="upload-error"
+            className="mt-1 text-xs text-red-600"
+            role="alert"
+          >
+            {uploadError}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
