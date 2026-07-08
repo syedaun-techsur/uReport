@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-07-08T14:16:12.900Z"
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-07-08T14:48:49.080Z"
 last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
 progress:
   total_phases: 7
-  completed_phases: 2
-  total_plans: 14
-  completed_plans: 13
+  completed_phases: 3
+  total_plans: 15
+  completed_plans: 15
   percent: 71
 ---
 
@@ -63,6 +63,7 @@ Progress: [███████░░░] 71%
 | Phase 02-authentication-sessions P07 | 2min | 2 tasks | 4 files |
 | Phase 03-public-portal-constituent-tracking P03 | 3min | 2 tasks | 6 files |
 | Phase 03-public-portal-constituent-tracking P01 | 5min | 2 tasks | 7 files |
+| Phase 03-public-portal-constituent-tracking P04 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,7 @@ Recent decisions affecting current work:
 - [Phase 03-public-portal-constituent-tracking]: CDN URLs for Leaflet marker icons — avoids Next.js static image import issues, consistent with ReportingMap.tsx
 - [Phase 03-public-portal-constituent-tracking]: Remove app/page.tsx placeholder — (public)/page.tsx serves same / route; both cannot coexist in Next.js route groups
 - [Phase 03-public-portal-constituent-tracking]: GET /api/categories includes group_name via CategoryGroup join — avoids separate API call from frontend category picker
+- [Phase 03-public-portal-constituent-tracking]: Bracket notation scripts?.['db:migrate'] required for colon-containing npm script keys in Node.js inline -e expressions
 
 ### Pending Todos
 
@@ -108,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T14:16:12.899Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-07-08T14:48:49.078Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
