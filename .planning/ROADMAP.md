@@ -41,7 +41,7 @@ Plans:
 - [x] 01-03-PLAN.md — Health endpoints (/api/health/live + /api/health/ready), PostGIS detection + Haversine fallback (lib/geo.ts), shared API response helpers
 
 ### Phase 2: Authentication & Sessions
-**Status**: executing
+**Status**: awaiting verify
 **Goal**: City staff and admins can log in with email/password, have role-enforced sessions that persist across browser refreshes, and be redirected to login when accessing protected routes without a session
 **Depends on**: Phase 1
 **Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04
