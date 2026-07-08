@@ -84,16 +84,16 @@ Plans:
 **Depends on**: Phase 1 (Ticket model, Category model, ApiKey model)
 **Requirements**: O311-01, O311-02, O311-03, O311-04, O311-05, O311-06, O311-07
 **Success Criteria** (what must be TRUE):
-  1. `GET /api/v2/services` returns all active categories in GeoReport v2 format; `GET /api/v2/services/{service_code}` returns the matching service definition including custom fields
-  2. `POST /api/v2/requests` with a valid `api_key` creates a Ticket and returns `service_request_id`; a missing or invalid key returns 401
-  3. `GET /api/v2/requests` returns filterable, paginated results with `X-Total-Count`, `X-Page`, `X-Page-Size`, `X-Has-Next-Page` headers; `GET /api/v2/requests/{id}` returns a single request
+  1. `GET /api/open311/services` returns all active categories in GeoReport v2 format; `GET /api/open311/services/{service_code}` returns the matching service definition including custom fields
+  2. `POST /api/open311/requests` with a valid `api_key` creates a Ticket and returns `service_request_id`; a missing or invalid key returns 401
+  3. `GET /api/open311/requests` returns filterable, paginated results with `X-Total-Count`, `X-Page`, `X-Page-Size`, `X-Has-Next-Page` headers; `GET /api/open311/requests/{id}` returns a single request
   4. All response field names match GeoReport v2 exactly (`service_request_id`, `status`, `lat`, `long`, `requested_datetime`, `updated_datetime`)
   5. Sending `Accept: application/xml` or `?format=xml` returns well-formed XML equivalent in content to the JSON response
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Open311 field mapper (`lib/open311.ts`), XML serializer, API key verification, rate limiter
-- [ ] 04-02: All five route handlers (`/api/v2/services`, `/api/v2/services/[code]`, `/api/v2/requests` GET/POST, `/api/v2/requests/[id]`)
+- [ ] 04-01-PLAN.md — Open311 library layer: `lib/open311.ts` (field mapper, XML serializer, API key verifier), `types/open311.ts`, `schemas/open311.ts`, `lib/rate-limit.ts` + Vitest unit tests
+- [ ] 04-02-PLAN.md — All five route handlers: `GET/POST /api/open311/requests`, `GET /api/open311/requests/[id]`, `GET /api/open311/services`, `GET /api/open311/services/[service_code]`
 
 ### Phase 5: Staff Ticket Console
 **Goal**: Authenticated staff can work the full ticket lifecycle — browse a filterable, searchable, bookmarkable queue; open a ticket detail; change status/substatus; assign to a department or person; post internal notes and public responses using templates; view the history timeline; and manage media attachments
