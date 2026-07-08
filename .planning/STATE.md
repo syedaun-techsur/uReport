@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-07-08T19:59:45.074Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-07-08T20:05:04.383Z"
 last_activity: "2026-07-08 — 04-01 complete: Open311 library layer built and tested"
 progress:
   total_phases: 7
   completed_phases: 4
   total_plans: 26
-  completed_plans: 19
+  completed_plans: 20
   percent: 94
 ---
 
@@ -67,6 +67,7 @@ Progress: [█████████░] 94%
 | Phase 03-public-portal-constituent-tracking P05 | 1min | 2 tasks | 2 files |
 | Phase 04-open311-georeport-v2-api P01 | 2min | 2 tasks | 5 files |
 | Phase 05-staff-ticket-console P01 | 5min | 2 tasks | 9 files |
+| Phase 05-staff-ticket-console P02 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,9 @@ Recent decisions affecting current work:
 - [Phase 05-staff-ticket-console]: FTS uses Prisma.sql template literals throughout — $queryRawUnsafe explicitly forbidden (T-05-02)
 - [Phase 05-staff-ticket-console]: Departments endpoint at /api/staff/departments (staff-auth) for FilterPanel dropdown — not public
 - [Phase 05-staff-ticket-console]: E2E staff login uses 'identifier' field (not username) and password Staff1234!secure from prisma/seed.ts
+- [Phase 05-staff-ticket-console]: No shadcn/UI — BookmarkBar uses Tailwind-only patterns matching existing FilterPanel/TicketTable
+- [Phase 05-staff-ticket-console]: IDOR guard pattern: findFirst({ where: { id, user_id } }) before every bookmark mutation (T-05-06)
+- [Phase 05-staff-ticket-console]: filter_json cast as Prisma.InputJsonValue — required for TypeScript strict Json field typing
 
 ### Pending Todos
 
@@ -119,6 +123,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T19:59:45.073Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-07-08T20:05:04.381Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
