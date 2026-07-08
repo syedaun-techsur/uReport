@@ -1,19 +1,15 @@
 {
   "generator_version": "init-dev-server@1",
   "catalog_entry": "react-next",
-  "generated_at": "2026-07-08T01:18:40Z",
-  "inspection_inputs_hash": "b3c946f975b0b80e89c5b895effd9fa39c64163cf99461873340b2540da024be",
+  "generated_at": "2026-07-08T01:51:55Z",
+  "inspection_inputs_hash": "0b4fa358c0aaeea93514bc1586f6ae373c30ed7e2295b6778f8d63bd11d968ce",
   "inspection_inputs": {
     "matched_globs": [
       "next.config.ts",
       "package.json"
     ],
     "manifest_signatures": [
-      "package.json:dep:@prisma/client@^6.0.0",
       "package.json:dep:next@^15.0.0",
-      "package.json:dep:prisma@^6.0.0",
-      "package.json:dep:react-dom@^19.0.0",
-      "package.json:dep:react@^19.0.0",
       "package.json:dev-script:next dev --turbopack"
     ],
     "existing_scripts": [
