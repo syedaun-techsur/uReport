@@ -63,7 +63,7 @@ Plans:
 - [ ] 02-08-PLAN.md — [GAP] Dev server pre-launch migrate+seed (.pivota/start-dev.sh); ensures fresh sandbox has schema+seed before Next.js starts
 
 ### Phase 3: Public Portal & Constituent Tracking
-**Status**: In Progress
+**Status**: executing
 **Goal**: Any city resident can report a municipal issue using a map-first form (pin or address, category, description, optional photo and contact), receive a ticket ID, and later look up that ticket's status or view all open issues on a public map — all without logging in
 **Depends on**: Phase 1 (data model; Auth not required for public routes)
 **Requirements**: PUB-01, PUB-02, PUB-03, PUB-04, PUB-05, PUB-06, TRACK-01, TRACK-02
