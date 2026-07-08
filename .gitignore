@@ -27,6 +27,8 @@ ansible/*.retry
 .nuxt/
 .vite/
 .turbo/
+.env.local
+.env*.local
 
 # >>> pivota:gitignore-managed
 # Patterns auto-managed by Pivota — refreshed on every push so coverage
@@ -149,5 +151,3 @@ opencode.json.bak
 AGENTS.md
 .opencode.session
 # <<< pivota:gitignore-managed
-.env.local
-.env*.local
