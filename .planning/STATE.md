@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-07-07T23:30:17.267Z"
-last_activity: "2026-07-07 — 02-04 complete: /staff/tickets placeholder page + Playwright gap-closure tests (Phase 2 done)"
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-07-08T01:47:19.350Z"
+last_activity: "2026-07-07 — 02-04 complete: /staff/tickets placeholder page + Playwright gap-closure tests"
 progress:
   total_phases: 7
   completed_phases: 2
-  total_plans: 10
-  completed_plans: 7
+  total_plans: 12
+  completed_plans: 9
   percent: 70
 ---
 
@@ -57,6 +57,8 @@ Progress: [███████░░░] 70%
 | Phase 02-authentication-sessions P01 | 3min | 2 tasks | 6 files |
 | Phase 02-authentication-sessions P03 | 1min | 1 tasks | 1 files |
 | Phase 02-authentication-sessions P04 | 1min | 2 tasks | 2 files |
+| Phase 02-authentication-sessions P05 | 1min | 2 tasks | 2 files |
+| Phase 02-authentication-sessions P06 | 1min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -81,6 +83,7 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-sessions]: Generic 'Invalid username or password' error — prevents credential enumeration (T-02-02)
 - [Phase 02-authentication-sessions]: Auto-seed on empty DB (user count = 0) rather than requiring SEED_ON_BOOT=true — eliminates UAT gap where all 8 auth tests failed on fresh DB
 - [Phase 02-authentication-sessions]: Placeholder page required for middleware interception — Next.js returns 404 before middleware fires when page file is missing — Creating app/staff/tickets/page.tsx is the minimal fix for both Gap 2 and Gap 3
+- [Phase 02-authentication-sessions]: AUTH_SECRET generated via openssl rand -hex 32 and placed in gitignored .env.local; .env.example committed as discoverable documentation
 
 ### Pending Todos
 
@@ -92,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-07T23:30:17.266Z
-Stopped at: Completed 02-04-PLAN.md
+Last session: 2026-07-08T01:47:09.068Z
+Stopped at: Completed 02-05-PLAN.md
 Resume file: None
