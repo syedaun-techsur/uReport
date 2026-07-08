@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-06-PLAN.md
-last_updated: "2026-07-08T01:47:25.192Z"
-last_activity: "2026-07-08 — 02-06 complete: staff layout + LogoutButton + E2E logout test updated (AUTH-03 closed)"
+stopped_at: Completed 02-08-PLAN.md
+last_updated: "2026-07-08T02:34:04.945Z"
+last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
 progress:
   total_phases: 7
-  completed_phases: 2
-  total_plans: 12
-  completed_plans: 9
+  completed_phases: 1
+  total_plans: 14
+  completed_plans: 10
   percent: 75
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-07-06)
 ## Current Position
 
 Phase: 2 of 7 (Authentication & Sessions) — COMPLETE
-Plan: 6 of 6 in current phase (all done: 02-01, 02-02, 02-03, 02-04, 02-05, 02-06)
-Status: Phase 2 complete — auth provider, middleware, seed fix, staff/tickets placeholder, staff layout + logout button all done
-Last activity: 2026-07-08 — 02-06 complete: staff layout + LogoutButton + E2E logout test updated (AUTH-03 closed)
+Plan: 8 of 8 in current phase (all done: 02-01, 02-02, 02-03, 02-04, 02-05, 02-06, 02-07, 02-08)
+Status: Phase 2 complete — auth provider, middleware, seed fix, staff/tickets placeholder, staff layout + logout button, dev DB migrate+seed all done
+Last activity: 2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)
 
-Progress: [████████░░] 75%
+Progress: [███████░░░] 71%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [████████░░] 75%
 | Phase 02-authentication-sessions P04 | 1min | 2 tasks | 2 files |
 | Phase 02-authentication-sessions P05 | 1min | 2 tasks | 2 files |
 | Phase 02-authentication-sessions P06 | 1min | 2 tasks | 3 files |
+| Phase 02-authentication-sessions P08 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,7 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-sessions]: Placeholder page required for middleware interception — Next.js returns 404 before middleware fires when page file is missing — Creating app/staff/tickets/page.tsx is the minimal fix for both Gap 2 and Gap 3
 - [Phase 02-authentication-sessions]: AUTH_SECRET generated via openssl rand -hex 32 and placed in gitignored .env.local; .env.example committed as discoverable documentation
 - [Phase 02-authentication-sessions]: signOut imported from next-auth/react (client) not @/lib/auth (server-only) — correct client-side path for next-auth v5 beta
+- [Phase 02-authentication-sessions]: Migrate+seed block placed below END PIVOTA PREAMBLE marker in start-dev.sh preserved region — survives start-dev.sh regeneration by START-DEV workflow
 
 ### Pending Todos
 
@@ -96,6 +98,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T01:47:25.191Z
-Stopped at: Completed 02-06-PLAN.md
+Last session: 2026-07-08T02:34:04.943Z
+Stopped at: Completed 02-08-PLAN.md
 Resume file: None
