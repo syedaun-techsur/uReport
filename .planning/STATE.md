@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: verifying
 stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-07-08T20:09:46.935Z"
+last_updated: "2026-07-08T20:17:07.003Z"
 last_activity: "2026-07-08 — 04-01 complete: Open311 library layer built and tested"
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 26
-  completed_plans: 21
+  completed_plans: 22
   percent: 94
 ---
 
@@ -69,6 +69,7 @@ Progress: [█████████░] 94%
 | Phase 05-staff-ticket-console P01 | 5min | 2 tasks | 9 files |
 | Phase 05-staff-ticket-console P02 | 3min | 2 tasks | 5 files |
 | Phase 05-staff-ticket-console P03 | 2min | 2 tasks | 7 files |
+| Phase 05-staff-ticket-console P04 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,7 @@ Recent decisions affecting current work:
 - [Phase 05-staff-ticket-console]: filter_json cast as Prisma.InputJsonValue — required for TypeScript strict Json field typing
 - [Phase 05-staff-ticket-console]: MiniMap split into MiniMap.tsx wrapper + _MiniMapInner.tsx — dynamic(ssr:false) must wrap the file importing Leaflet
 - [Phase 05-staff-ticket-console]: Staff detail page as client component using useEffect fetch — MiniMap requires use client context
+- [Phase 05-staff-ticket-console]: prisma.$transaction interactive form for media route — storeMedia needs tx client; cast as Parameters<typeof storeMedia>[0]
 
 ### Pending Todos
 
