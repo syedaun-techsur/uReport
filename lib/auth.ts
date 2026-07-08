@@ -7,6 +7,11 @@ import { log } from '@/lib/logger';
 import { LoginSchema } from '@/schemas/auth';
 
 const nextAuth = NextAuth({
+  // Trust the proxy-forwarded host so Auth.js derives redirect/callback URLs from
+  // the real (preview) request host instead of the dev server's `0.0.0.0` bind
+  // address. Without this the 0.0.0.0 host leaked into logout/login redirects
+  // ("0.0.0.0 refused to connect").
+  trustHost: true,
   providers: [
     Credentials({
       name: 'Credentials',

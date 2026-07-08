@@ -1,18 +1,17 @@
 // app/login/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { LoginSchema } from '@/schemas/auth';
 import type { z } from 'zod';
 
 type LoginFormData = z.infer<typeof LoginSchema>;
 
-export default function LoginPage() {
-  const router = useRouter();
+function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/staff/tickets';
   const [serverError, setServerError] = useState<string | null>(null);
@@ -30,11 +29,8 @@ export default function LoginPage() {
     setServerError(null);
     setIsPending(true);
 
-    // First try with redirect: false to catch credential errors inline.
-    // If credentials are valid, Auth.js returns result.ok = true and result.url.
-    // Then we hard-navigate to the callbackUrl so the browser sends the session
-    // cookie on a fresh full-page request (client-side router.push doesn't work
-    // through the Pivota preview proxy — the middleware never sees the request).
+    // redirect:false so we can show credential errors inline instead of letting
+    // Auth.js bounce to its error page.
     const result = await signIn('credentials', {
       identifier: data.identifier,
       password: data.password,
@@ -49,13 +45,12 @@ export default function LoginPage() {
       return;
     }
 
-    // Auth succeeded — navigate via form submission to ensure proxy-compatible redirect.
-    // This creates a GET request the proxy can follow and sets the cookie correctly.
-    const form = document.createElement('form');
-    form.method = 'GET';
-    form.action = callbackUrl;
-    document.body.appendChild(form);
-    form.submit();
+    // Auth succeeded — do a real full-page navigation to the (relative) callback
+    // URL: this makes the browser send the freshly-set session cookie and runs
+    // middleware server-side, and a relative URL resolves against the current
+    // preview origin (no 0.0.0.0/host leak). Guard against open redirects.
+    const target = callbackUrl.startsWith('/') ? callbackUrl : '/staff/tickets';
+    window.location.assign(target);
   }
 
   return (
@@ -127,5 +122,15 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  // useSearchParams() must be inside a Suspense boundary, or the production build
+  // fails the CSR-bailout prerender check for /login.
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
