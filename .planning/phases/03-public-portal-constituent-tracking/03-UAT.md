@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 03-public-portal-constituent-tracking
 source: [03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md]
 started: 2026-07-08T15:57:00Z
@@ -86,7 +86,12 @@ per_test:
   severity: major
   test: 6
   source: user
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Public API route uses findUnique({ where: { id } }) which only matches internal CUIDs. Confirmation page shows reference_id as the user-facing Ticket ID. When user navigates to /tickets/[reference_id], the API returns 404 because reference_id lookup is not supported."
+  artifacts:
+    - path: "app/api/tickets/[id]/public/route.ts"
+      issue: "findUnique({ where: { id } }) only looks up by internal CUID — reference_id not supported"
+    - path: "app/(public)/tickets/[id]/confirm/page.tsx"
+      issue: "Line 30: shows reference_id as the user-facing Ticket ID, but route only accepts internal id"
+  missing:
+    - "Change findUnique({ where: { id } }) to findFirst({ where: { OR: [{ id }, { reference_id: id }] } }) in app/api/tickets/[id]/public/route.ts so both id and reference_id resolve the ticket"
   debug_session: ""
