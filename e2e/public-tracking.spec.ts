@@ -125,4 +125,35 @@ test.describe('Public Ticket Tracking', () => {
     // Next.js notFound() renders the not-found page
     await expect(page.getByText(/404|not found/i)).toBeVisible({ timeout: 5000 });
   });
+
+  test('Public ticket detail page renders when navigated by reference_id', async ({ page }) => {
+    // Create a ticket to get a real reference_id
+    const catRes = await page.request.get('/api/categories');
+    const categories = await catRes.json() as Array<{ id: string; anon_allowed: boolean }>;
+    const cat = categories.find((c) => c.anon_allowed) ?? categories[0];
+    if (!cat) {
+      test.skip(true, 'No categories in seed data');
+      return;
+    }
+    const createRes = await page.request.post('/api/tickets', {
+      multipart: {
+        lat: '39.165325',
+        lng: '-86.526384',
+        address: '600 E Miller Dr, Bloomington, IN 47401',
+        category_id: cat.id,
+        description: 'Pothole causing damage near intersection — reference_id lookup test',
+      },
+    });
+    if (createRes.status() !== 201) {
+      test.skip(true, 'Could not create ticket for reference_id lookup test');
+      return;
+    }
+    const { reference_id } = await createRes.json();
+
+    // Navigate using reference_id (the user-facing ID shown on confirm page)
+    await page.goto(`/tickets/${reference_id}`);
+    // Should show the reference_id badge and NOT be a 404
+    await expect(page.getByText(`#${reference_id}`)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/open|in.progress|closed/i)).toBeVisible();
+  });
 });
