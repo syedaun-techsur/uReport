@@ -51,8 +51,7 @@ export HOST=0.0.0.0
 #
 # For allowedDevOrigins (required for sandbox preview iframe embedding on
 # Next 14.x+), there is NO env var; it is a next.config.* field only.
-# See the pre-exec snippet below — we write a small overlay file as a
-# best-effort seed. Read the ## Notes section of the catalog entry for limitations.
+# This project's next.config.ts already declares allowedDevOrigins — no overlay needed.
 #
 # HOST=0.0.0.0 is also exported for the rare downstream tool / script that
 # reads $HOST for its own host-binding decisions (Next itself ignores it).
@@ -82,7 +81,7 @@ if [[ ! -f .env && -f .env.example ]]; then
   done < .env.example > .env
 fi
 
-# === Optional pre-exec snippet (react-next: allowedDevOrigins overlay + DB migrate) ===
+# === Optional pre-exec snippet (Next.js allowedDevOrigins overlay + DB migrate) ===
 # Only patch if user's next.config doesn't already include allowedDevOrigins.
 for CFG in next.config.mjs next.config.js next.config.ts; do
   if [[ -f "$CFG" ]]; then
@@ -116,16 +115,12 @@ done
 
 # Best-effort schema migration on platform-provided-DB backends (K8s / Local):
 # when the platform injects a database (PIVOTA_DB_MODE / DATABASE_URL set) and
-# the app declares a `db:migrate` script, run it BEFORE the dev server so the
-# schema exists on first request — even if the app's `dev` script didn't chain
-# `npm run db:migrate && …`. Migrations are expected to be idempotent
-# (CREATE TABLE IF NOT EXISTS …), so a repeat when `dev` also runs migrate is
-# safe. No-op when no injected DATABASE_URL.
-if [ -n "${PIVOTA_DB_MODE:-}" ] || [ -n "${DATABASE_URL:-}" ]; then
-  if node -e "process.exit(require('./package.json').scripts?.['db:migrate']?0:1)" 2>/dev/null; then
-    echo "[pivota] platform DB detected — running 'npm run db:migrate' (best-effort) before dev server"
-    npm run db:migrate || echo "[pivota] db:migrate non-zero (continuing; dev script may re-run it)"
-  fi
+# the app declares a db:migrate script, run it BEFORE the dev server so the
+# schema exists on first request. Migrations are idempotent (prisma migrate deploy).
+# No-op if DATABASE_URL is absent.
+if [ -n "${DATABASE_URL:-}" ]; then
+  echo "[pivota] DATABASE_URL detected — running 'npm run db:migrate' (prisma migrate deploy) before dev server"
+  npm run db:migrate || echo "[pivota] db:migrate non-zero (continuing; check migration output above)"
 fi
 
 # === D-12: idempotent install via lockfile hash + presence check ===

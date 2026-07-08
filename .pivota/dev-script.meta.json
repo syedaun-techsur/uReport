@@ -1,19 +1,17 @@
 {
   "generator_version": "init-dev-server@1",
   "catalog_entry": "react-next",
-  "generated_at": "2026-07-08T16:37:29Z",
-  "inspection_inputs_hash": "0b4fa358c0aaeea93514bc1586f6ae373c30ed7e2295b6778f8d63bd11d968ce",
+  "generated_at": "2026-07-08T18:44:22Z",
+  "inspection_inputs_hash": "e32932e40a7ca42953e31e94abffd59b40eae76163ef2185b7b0f0bb904ff64f",
   "inspection_inputs": {
     "matched_globs": [
-      "next.config.ts",
+      "next.config.*",
       "package.json"
     ],
     "manifest_signatures": [
       "package.json:dep:next@^15.0.0",
       "package.json:dev-script:next dev --turbopack"
     ],
-    "existing_scripts": [
-      "scripts/migrate-and-start.js"
-    ]
+    "existing_scripts": []
   }
 }
