@@ -44,8 +44,11 @@ export default function LoginPage() {
       return;
     }
 
-    router.push(callbackUrl);
-    router.refresh();
+    // Use window.location for full navigation — next/navigation router.push
+    // does a client-side soft nav that doesn't reach the server through the
+    // Pivota preview proxy (middleware never sees the request). Hard redirect
+    // ensures the session cookie is sent with a fresh request.
+    window.location.href = callbackUrl;
   }
 
   return (
