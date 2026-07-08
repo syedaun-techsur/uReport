@@ -3,15 +3,15 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 02-05-PLAN.md
-last_updated: "2026-07-08T01:47:19.350Z"
-last_activity: "2026-07-07 — 02-04 complete: /staff/tickets placeholder page + Playwright gap-closure tests"
+stopped_at: Completed 02-06-PLAN.md
+last_updated: "2026-07-08T01:47:25.192Z"
+last_activity: "2026-07-08 — 02-06 complete: staff layout + LogoutButton + E2E logout test updated (AUTH-03 closed)"
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 12
   completed_plans: 9
-  percent: 70
+  percent: 75
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-07-06)
 ## Current Position
 
 Phase: 2 of 7 (Authentication & Sessions) — COMPLETE
-Plan: 4 of 4 in current phase (all done: 02-01, 02-02, 02-03, 02-04)
-Status: Phase 2 complete — auth provider, middleware, seed fix, and staff/tickets placeholder all done
-Last activity: 2026-07-07 — 02-04 complete: /staff/tickets placeholder page + Playwright gap-closure tests
+Plan: 6 of 6 in current phase (all done: 02-01, 02-02, 02-03, 02-04, 02-05, 02-06)
+Status: Phase 2 complete — auth provider, middleware, seed fix, staff/tickets placeholder, staff layout + logout button all done
+Last activity: 2026-07-08 — 02-06 complete: staff layout + LogoutButton + E2E logout test updated (AUTH-03 closed)
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
@@ -84,6 +84,7 @@ Recent decisions affecting current work:
 - [Phase 02-authentication-sessions]: Auto-seed on empty DB (user count = 0) rather than requiring SEED_ON_BOOT=true — eliminates UAT gap where all 8 auth tests failed on fresh DB
 - [Phase 02-authentication-sessions]: Placeholder page required for middleware interception — Next.js returns 404 before middleware fires when page file is missing — Creating app/staff/tickets/page.tsx is the minimal fix for both Gap 2 and Gap 3
 - [Phase 02-authentication-sessions]: AUTH_SECRET generated via openssl rand -hex 32 and placed in gitignored .env.local; .env.example committed as discoverable documentation
+- [Phase 02-authentication-sessions]: signOut imported from next-auth/react (client) not @/lib/auth (server-only) — correct client-side path for next-auth v5 beta
 
 ### Pending Todos
 
@@ -95,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T01:47:09.068Z
-Stopped at: Completed 02-05-PLAN.md
+Last session: 2026-07-08T01:47:25.191Z
+Stopped at: Completed 02-06-PLAN.md
 Resume file: None
