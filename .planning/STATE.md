@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-07-08T20:05:04.383Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-07-08T20:09:46.935Z"
 last_activity: "2026-07-08 — 04-01 complete: Open311 library layer built and tested"
 progress:
   total_phases: 7
   completed_phases: 4
   total_plans: 26
-  completed_plans: 20
+  completed_plans: 21
   percent: 94
 ---
 
@@ -68,6 +68,7 @@ Progress: [█████████░] 94%
 | Phase 04-open311-georeport-v2-api P01 | 2min | 2 tasks | 5 files |
 | Phase 05-staff-ticket-console P01 | 5min | 2 tasks | 9 files |
 | Phase 05-staff-ticket-console P02 | 3min | 2 tasks | 5 files |
+| Phase 05-staff-ticket-console P03 | 2min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,8 @@ Recent decisions affecting current work:
 - [Phase 05-staff-ticket-console]: No shadcn/UI — BookmarkBar uses Tailwind-only patterns matching existing FilterPanel/TicketTable
 - [Phase 05-staff-ticket-console]: IDOR guard pattern: findFirst({ where: { id, user_id } }) before every bookmark mutation (T-05-06)
 - [Phase 05-staff-ticket-console]: filter_json cast as Prisma.InputJsonValue — required for TypeScript strict Json field typing
+- [Phase 05-staff-ticket-console]: MiniMap split into MiniMap.tsx wrapper + _MiniMapInner.tsx — dynamic(ssr:false) must wrap the file importing Leaflet
+- [Phase 05-staff-ticket-console]: Staff detail page as client component using useEffect fetch — MiniMap requires use client context
 
 ### Pending Todos
 
@@ -123,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T20:05:04.381Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-07-08T20:09:43.215Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
