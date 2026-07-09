@@ -144,11 +144,11 @@ Plans:
   2. The dashboard shows open vs. closed ticket counts and average resolution time (hours) by category and department
   3. The dashboard includes a Leaflet-based geographic cluster/heat view of ticket locations
   4. Dashboard data reflects the current state of the database on each page load (no stale cache)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: Report API routes (volume-by-category, volume-by-department, status-breakdown, resolution-time, geo-density)
-- [ ] 07-02: Reports dashboard page — date range picker, charts (recharts/shadcn), DensityMap component
+- [ ] 07-01-PLAN.md — Report API routes: schemas/reports.ts + lib/reports.ts + five GET handlers (volume-by-category, volume-by-department, status-breakdown, resolution-time, geo-density) + Vitest unit tests
+- [ ] 07-02-PLAN.md — Reports dashboard page: DateRangePicker, SummaryCards, VolumeChart, StatusBreakdown, ResolutionTimeChart, DensityMap (Leaflet ssr:false) + Playwright E2E tests
 
 ## Progress
 
