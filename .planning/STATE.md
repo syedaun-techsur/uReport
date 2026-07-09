@@ -2,16 +2,16 @@
 pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-07-08T17:20:58.015Z"
-last_activity: "2026-07-08 — 02-08 complete: migrate+seed pre-launch block added to start-dev.sh (UAT Gap 1 closed)"
+status: verifying
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-07-08T20:17:07.003Z"
+last_activity: "2026-07-08 — 04-01 complete: Open311 library layer built and tested"
 progress:
   total_phases: 7
-  completed_phases: 3
-  total_plans: 18
-  completed_plans: 17
-  percent: 71
+  completed_phases: 5
+  total_plans: 26
+  completed_plans: 22
+  percent: 94
 ---
 
 # Project State
@@ -66,6 +66,10 @@ Progress: [█████████░] 94%
 | Phase 03-public-portal-constituent-tracking P04 | 1min | 1 tasks | 1 files |
 | Phase 03-public-portal-constituent-tracking P05 | 1min | 2 tasks | 2 files |
 | Phase 04-open311-georeport-v2-api P01 | 2min | 2 tasks | 5 files |
+| Phase 05-staff-ticket-console P01 | 5min | 2 tasks | 9 files |
+| Phase 05-staff-ticket-console P02 | 3min | 2 tasks | 5 files |
+| Phase 05-staff-ticket-console P03 | 2min | 2 tasks | 7 files |
+| Phase 05-staff-ticket-console P04 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -104,6 +108,15 @@ Recent decisions affecting current work:
 - [Phase 03-public-portal-constituent-tracking]: findFirst with OR: [{ id }, { reference_id: id }] replaces findUnique for dual-key public ticket lookup
 - [Phase 04-open311-georeport-v2-api]: GeoReport v2 field 'long' not 'lng' — Open311 spec uses 'long'; internal Prisma model uses 'lng'; ticketToServiceRequest maps lng→long explicitly
 - [Phase 04-open311-georeport-v2-api]: Both missing and revoked API keys return 'key_not_found' — prevents enumeration of key existence (T-04-03 threat mitigation)
+- [Phase 05-staff-ticket-console]: FTS uses Prisma.sql template literals throughout — $queryRawUnsafe explicitly forbidden (T-05-02)
+- [Phase 05-staff-ticket-console]: Departments endpoint at /api/staff/departments (staff-auth) for FilterPanel dropdown — not public
+- [Phase 05-staff-ticket-console]: E2E staff login uses 'identifier' field (not username) and password Staff1234!secure from prisma/seed.ts
+- [Phase 05-staff-ticket-console]: No shadcn/UI — BookmarkBar uses Tailwind-only patterns matching existing FilterPanel/TicketTable
+- [Phase 05-staff-ticket-console]: IDOR guard pattern: findFirst({ where: { id, user_id } }) before every bookmark mutation (T-05-06)
+- [Phase 05-staff-ticket-console]: filter_json cast as Prisma.InputJsonValue — required for TypeScript strict Json field typing
+- [Phase 05-staff-ticket-console]: MiniMap split into MiniMap.tsx wrapper + _MiniMapInner.tsx — dynamic(ssr:false) must wrap the file importing Leaflet
+- [Phase 05-staff-ticket-console]: Staff detail page as client component using useEffect fetch — MiniMap requires use client context
+- [Phase 05-staff-ticket-console]: prisma.$transaction interactive form for media route — storeMedia needs tx client; cast as Parameters<typeof storeMedia>[0]
 
 ### Pending Todos
 
@@ -115,6 +128,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T17:20:58.014Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-07-08T20:09:43.215Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
