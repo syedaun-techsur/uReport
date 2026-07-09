@@ -118,6 +118,7 @@ Plans:
 - [ ] 05-04-PLAN.md — Mutations (PATCH status/assign, POST responses, POST media) + ResponseComposer + MediaGallery upload + GET /api/staff/users + GET /api/staff/response-templates + Playwright E2E
 
 ### Phase 6: Admin Panel & CRM
+**Status**: In Progress
 **Goal**: Admins can configure all system reference data (categories, departments, substatuses, response templates, users, API keys) through a back-office UI with a full audit log; staff can search, view, link, and manage constituent Person records
 **Depends on**: Phase 2 (auth/admin role), Phase 5 (staff console foundation for Person–Ticket linking)
 **Requirements**: CRM-01, CRM-02, CRM-03, CRM-04, CRM-05, ADMIN-01, ADMIN-02, ADMIN-03, ADMIN-04, ADMIN-05, ADMIN-06, ADMIN-07, ADMIN-08
