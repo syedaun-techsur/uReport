@@ -3,15 +3,15 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-07-09T03:44:00.000Z"
-last_activity: "2026-07-09 — 06-02 complete: admin user management + API key lifecycle + audit log viewer"
+stopped_at: Completed 06-04-PLAN.md
+last_updated: "2026-07-09T04:30:00.000Z"
+last_activity: "2026-07-09 — 06-04 complete: CRM merge + anonymize API routes + UI dialogs + 5 Playwright E2E tests"
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 26
-  completed_plans: 24
-  percent: 96
+  completed_plans: 25
+  percent: 98
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-07-06)
 
 ## Current Position
 
-Phase: 6 of 7 (Admin Panel + CRM) — IN PROGRESS
-Plan: 3 of N completed (06-03 done; 06-04 next — merge + anonymize)
-Status: Phase 6 Plan 3 complete — CRM people module: Postgres FTS search, CRUD, link/unlink, 4 staff pages, 3 UI components, 6 E2E tests
-Last activity: 2026-07-09 — 06-03 complete: CRM people module built
+Phase: 6 of 7 (Admin Panel + CRM) — COMPLETE
+Plan: 4 of 4 completed (06-04 done — merge + anonymize)
+Status: Phase 6 complete — CRM merge + anonymize: 2 API routes, updated PersonDetail UI, 5 E2E tests
+Last activity: 2026-07-09 — 06-04 complete: CRM merge + anonymize built
 
 Progress: [█████████░] 96%
 
@@ -73,6 +73,7 @@ Progress: [█████████░] 96%
 | Phase 06-admin-panel-crm P01 | 8min | 2 tasks | 20 files |
 | Phase 06-admin-panel-crm P03 | 8min | 2 tasks | 14 files |
 | Phase 06-admin-panel-crm P02 | 15min | 2 tasks | 15 files |
+| Phase 06-admin-panel-crm P04 | 8min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -130,6 +131,9 @@ Recent decisions affecting current work:
 - [Phase 06-admin-panel-crm P02]: GET /api/admin/me added for frontend self-identification — needed by admin users page to disable deactivate-self button
 - [Phase 06-admin-panel-crm P02]: Interactive prisma.$transaction for create user + generate API key — sequential form cannot reference new record ID in audit log
 - [Phase 06-admin-panel-crm P02]: Admin login redirects to /staff/tickets first — admin users navigate to /admin via URL; no separate admin-only landing needed
+- [Phase 06-admin-panel-crm P04]: Tailwind-only inline modals for merge + anonymize — no shadcn/ui components installed; consistent with existing PersonDetail flag dialog pattern
+- [Phase 06-admin-panel-crm P04]: toDelete TicketPerson rows deleted in same merge transaction — prevents @@unique([ticket_id, person_id]) constraint violation
+- [Phase 06-admin-panel-crm P04]: Pre-fetch ticketLinks before anonymize transaction — Prisma $transaction does not support mid-transaction reads; query outside then include creates in ops array
 
 ### Pending Todos
 
@@ -141,6 +145,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-09T03:44:00Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-07-09T04:30:00Z
+Stopped at: Completed 06-04-PLAN.md
 Resume file: None
