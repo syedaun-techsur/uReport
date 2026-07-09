@@ -19,10 +19,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (sessionOrError instanceof NextResponse) return sessionOrError;
 
   const { searchParams } = request.nextUrl;
+  // searchParams.get() returns null for absent params; Zod's .default() only
+  // applies to undefined, and z.coerce.number() turns null into 0 (which fails
+  // .min(1)). Map absent params to undefined so page/page_size defaults apply —
+  // otherwise callers that omit page (e.g. the merge-target search) 422.
   const parsed = PersonSearchSchema.safeParse({
-    q: searchParams.get('q'),
-    page: searchParams.get('page'),
-    page_size: searchParams.get('page_size'),
+    q: searchParams.get('q') ?? undefined,
+    page: searchParams.get('page') ?? undefined,
+    page_size: searchParams.get('page_size') ?? undefined,
   });
   if (!parsed.success) {
     return apiError('VALIDATION_ERROR', 'Invalid query', 422);

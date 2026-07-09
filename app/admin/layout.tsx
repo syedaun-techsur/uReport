@@ -11,6 +11,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex items-center gap-6">
           <span className="text-sm font-semibold text-foreground">uReport NG — Admin</span>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <Link href="/admin/categories" className="hover:text-foreground transition-colors">
+              Categories
+            </Link>
+            <Link href="/admin/departments" className="hover:text-foreground transition-colors">
+              Departments
+            </Link>
+            <Link href="/admin/substatuses" className="hover:text-foreground transition-colors">
+              Substatuses
+            </Link>
+            <Link href="/admin/response-templates" className="hover:text-foreground transition-colors">
+              Response Templates
+            </Link>
             <Link href="/admin/users" className="hover:text-foreground transition-colors">
               Users
             </Link>
