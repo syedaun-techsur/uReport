@@ -3,15 +3,15 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 06-04-PLAN.md
-last_updated: "2026-07-09T04:30:00.000Z"
-last_activity: "2026-07-09 — 06-04 complete: CRM merge + anonymize API routes + UI dialogs + 5 Playwright E2E tests"
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-07-09T03:58:00.000Z"
+last_activity: "2026-07-09 — 07-01 complete: 5 report API routes + Zod schemas + pure helpers + 11 Vitest unit tests"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 26
-  completed_plans: 25
-  percent: 98
+  completed_plans: 26
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** City constituents can report municipal issues and staff can manage the full ticket lifecycle — all from one responsive, accessible web app running as a single Kubernetes pod with a Postgres sidecar.
-**Current focus:** Phase 6 — Admin Panel + CRM
+**Current focus:** Phase 7 — Reports + Metrics Dashboard
 
 ## Current Position
 
-Phase: 6 of 7 (Admin Panel + CRM) — COMPLETE
-Plan: 4 of 4 completed (06-04 done — merge + anonymize)
-Status: Phase 6 complete — CRM merge + anonymize: 2 API routes, updated PersonDetail UI, 5 E2E tests
-Last activity: 2026-07-09 — 06-04 complete: CRM merge + anonymize built
+Phase: 7 of 7 (Reports + Metrics Dashboard) — IN PROGRESS
+Plan: 1 of 1 completed (07-01 done — 5 report API routes + schemas + helpers + unit tests)
+Status: Phase 7 plan 1 complete — all five report endpoints, Zod validation, Vitest tests
+Last activity: 2026-07-09 — 07-01 complete: report data layer built
 
-Progress: [█████████░] 96%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Progress: [█████████░] 96%
 | Phase 06-admin-panel-crm P03 | 8min | 2 tasks | 14 files |
 | Phase 06-admin-panel-crm P02 | 15min | 2 tasks | 15 files |
 | Phase 06-admin-panel-crm P04 | 8min | 2 tasks | 4 files |
+| Phase 07-reports-metrics-dashboard P01 | 6min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -134,6 +135,9 @@ Recent decisions affecting current work:
 - [Phase 06-admin-panel-crm P04]: Tailwind-only inline modals for merge + anonymize — no shadcn/ui components installed; consistent with existing PersonDetail flag dialog pattern
 - [Phase 06-admin-panel-crm P04]: toDelete TicketPerson rows deleted in same merge transaction — prevents @@unique([ticket_id, person_id]) constraint violation
 - [Phase 06-admin-panel-crm P04]: Pre-fetch ticketLinks before anonymize transaction — Prisma $transaction does not support mid-transaction reads; query outside then include creates in ops array
+- [Phase 07-reports-metrics-dashboard P01]: Prisma.sql fragment composition for geo-density status filter — Zod-validated enum selects pre-built literal; user string never interpolated into SQL
+- [Phase 07-reports-metrics-dashboard P01]: COALESCE(d.id, 'unassigned') in volume-by-department — unassigned tickets grouped under synthetic id rather than NULL for consistent response shape
+- [Phase 07-reports-metrics-dashboard P01]: vitest.config.ts added — no vitest config existed; needed @/ alias to resolve unit test imports
 
 ### Pending Todos
 
@@ -145,6 +149,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-09T04:30:00Z
-Stopped at: Completed 06-04-PLAN.md
+Last session: 2026-07-09T03:58:00Z
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
