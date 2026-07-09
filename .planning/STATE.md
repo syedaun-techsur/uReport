@@ -70,6 +70,7 @@ Progress: [█████████░] 96%
 | Phase 05-staff-ticket-console P02 | 3min | 2 tasks | 5 files |
 | Phase 05-staff-ticket-console P03 | 2min | 2 tasks | 7 files |
 | Phase 05-staff-ticket-console P04 | 5min | 2 tasks | 9 files |
+| Phase 06-admin-panel-crm P01 | 8min | 2 tasks | 20 files |
 | Phase 06-admin-panel-crm P03 | 8min | 2 tasks | 14 files |
 
 ## Accumulated Context
@@ -118,6 +119,10 @@ Recent decisions affecting current work:
 - [Phase 05-staff-ticket-console]: MiniMap split into MiniMap.tsx wrapper + _MiniMapInner.tsx — dynamic(ssr:false) must wrap the file importing Leaflet
 - [Phase 05-staff-ticket-console]: Staff detail page as client component using useEffect fetch — MiniMap requires use client context
 - [Phase 05-staff-ticket-console]: prisma.$transaction interactive form for media route — storeMedia needs tx client; cast as Parameters<typeof storeMedia>[0]
+- [Phase 06-admin-panel-crm P01]: sla_hours kept in CreateCategorySchema for API compat but omitted from DB writes — Category model has no sla_hours column
+- [Phase 06-admin-panel-crm P01]: GET /api/admin/categories returns groups+departments in response — single call populates both selectors in CategoryForm
+- [Phase 06-admin-panel-crm P01]: Interactive prisma.$transaction used for all admin mutations — required to capture created.id for AdminAuditLog.resource_id
+- [Phase 06-admin-panel-crm P01]: Admin UI pages as 'use client' components — simpler interactivity model for CRUD operations
 - [Phase 06-admin-panel-crm]: Server+client split for edit page — server fetches person, _EditPersonClient handles form/redirect (avoids self-fetch cookie issues)
 - [Phase 06-admin-panel-crm]: CRM-05 duplicate flag pragmatic impl — PATCH person.notes prepending "DUPLICATE FLAG: {note}" (no separate DB field in v1)
 - [Phase 06-admin-panel-crm]: Anonymized persons masked at API layer — name/email/phone/notes returned as null; display_name='Anonymous Constituent' added to response
@@ -132,6 +137,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-09T00:00:00.000Z
-Stopped at: Completed 06-03-PLAN.md
+Last session: 2026-07-09T03:43:45Z
+Stopped at: Completed 06-01-PLAN.md (also 06-03 previously completed)
 Resume file: None
