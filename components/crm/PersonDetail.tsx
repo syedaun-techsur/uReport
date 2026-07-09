@@ -3,10 +3,13 @@
 // Full person detail card + linked tickets table — CRM-02, CRM-05
 // Shows anonymized banner if person.anonymized_at is set
 // "Flag as Duplicate" prepends note to person.notes (CRM-05 pragmatic impl)
+// "Merge with..." opens inline search + confirmation dialog (CRM-05)
+// "Anonymize Record" opens irreversible confirmation dialog (CRM-05 GDPR)
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Edit2, Flag, Merge, ShieldOff, Mail, Phone, StickyNote } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Edit2, Flag, Merge, ShieldOff, Mail, Phone, StickyNote, Search, X } from 'lucide-react';
 import { StatusBadge } from '@/components/tickets/StatusBadge';
 
 interface TicketSummary {
@@ -44,14 +47,50 @@ interface PersonDetailProps {
   };
 }
 
+interface PersonSearchResult {
+  id: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  anonymized_at: string | null;
+  ticket_count: number;
+}
+
 export function PersonDetail({ person }: PersonDetailProps) {
+  const router = useRouter();
   const isAnonymized = !!person.anonymized_at;
+
+  // ─── Flag as Duplicate state ──────────────────────────────────────────────
   const [showFlagDialog, setShowFlagDialog] = useState(false);
   const [flagNote, setFlagNote] = useState('');
   const [isFlagging, setIsFlagging] = useState(false);
   const [flagSuccess, setFlagSuccess] = useState(false);
   const [flagError, setFlagError] = useState<string | null>(null);
 
+  // ─── Merge state ──────────────────────────────────────────────────────────
+  const [showMergeDialog, setShowMergeDialog] = useState(false);
+  const [mergeSearchQuery, setMergeSearchQuery] = useState('');
+  const [mergeSearchResults, setMergeSearchResults] = useState<PersonSearchResult[]>([]);
+  const [mergeSearchLoading, setMergeSearchLoading] = useState(false);
+  const [selectedMergeTarget, setSelectedMergeTarget] = useState<PersonSearchResult | null>(null);
+  const [showMergeConfirm, setShowMergeConfirm] = useState(false);
+  const [isMerging, setIsMerging] = useState(false);
+  const [mergeError, setMergeError] = useState<string | null>(null);
+
+  // ─── Anonymize state ──────────────────────────────────────────────────────
+  const [showAnonymizeDialog, setShowAnonymizeDialog] = useState(false);
+  const [isAnonymizing, setIsAnonymizing] = useState(false);
+  const [anonymizeError, setAnonymizeError] = useState<string | null>(null);
+
+  // ─── Toast state ─────────────────────────────────────────────────────────
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  function showToast(message: string, type: 'success' | 'error') {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 5000);
+  }
+
+  // ─── Flag as Duplicate handler ────────────────────────────────────────────
   async function handleFlag() {
     if (!flagNote.trim()) return;
     setIsFlagging(true);
@@ -74,7 +113,6 @@ export function PersonDetail({ person }: PersonDetailProps) {
       setFlagSuccess(true);
       setShowFlagDialog(false);
       setFlagNote('');
-      // Reload to show updated notes
       window.location.reload();
     } catch (err) {
       setFlagError(err instanceof Error ? err.message : 'Failed to save flag');
@@ -83,8 +121,132 @@ export function PersonDetail({ person }: PersonDetailProps) {
     }
   }
 
+  // ─── Merge: search for target persons ────────────────────────────────────
+  const searchMergeTargets = useCallback(async (q: string) => {
+    if (!q.trim()) {
+      setMergeSearchResults([]);
+      return;
+    }
+    setMergeSearchLoading(true);
+    try {
+      const res = await fetch(`/api/staff/people?q=${encodeURIComponent(q)}&page_size=10`);
+      if (!res.ok) throw new Error('Search failed');
+      const json = (await res.json()) as { data: PersonSearchResult[] };
+      // Exclude current person and anonymized persons
+      setMergeSearchResults(
+        (json.data ?? []).filter(
+          (p) => p.id !== person.id && !p.anonymized_at
+        )
+      );
+    } catch {
+      setMergeSearchResults([]);
+    } finally {
+      setMergeSearchLoading(false);
+    }
+  }, [person.id]);
+
+  function handleMergeSearchChange(q: string) {
+    setMergeSearchQuery(q);
+    // Simple debounce via setTimeout
+    const timer = setTimeout(() => searchMergeTargets(q), 300);
+    return () => clearTimeout(timer);
+  }
+
+  function selectMergeTarget(target: PersonSearchResult) {
+    setSelectedMergeTarget(target);
+    setShowMergeConfirm(true);
+  }
+
+  async function handleMergeConfirm() {
+    if (!selectedMergeTarget) return;
+    setIsMerging(true);
+    setMergeError(null);
+    try {
+      const res = await fetch('/api/staff/people/merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source_id: person.id,
+          target_id: selectedMergeTarget.id,
+        }),
+      });
+      const json = (await res.json()) as {
+        target_person_id?: string;
+        tickets_relinked?: number;
+        error?: { code?: string; message?: string };
+      };
+      if (!res.ok) {
+        throw new Error(json.error?.message ?? 'Merge failed');
+      }
+      const ticketsCount = json.tickets_relinked ?? 0;
+      showToast(
+        `Merge complete — ${ticketsCount} ticket${ticketsCount === 1 ? '' : 's'} transferred`,
+        'success'
+      );
+      setShowMergeDialog(false);
+      setShowMergeConfirm(false);
+      // Navigate to target person
+      router.push(`/staff/people/${json.target_person_id}`);
+    } catch (err) {
+      setMergeError(err instanceof Error ? err.message : 'Merge failed');
+    } finally {
+      setIsMerging(false);
+    }
+  }
+
+  function closeMergeDialog() {
+    setShowMergeDialog(false);
+    setShowMergeConfirm(false);
+    setSelectedMergeTarget(null);
+    setMergeSearchQuery('');
+    setMergeSearchResults([]);
+    setMergeError(null);
+  }
+
+  // ─── Anonymize handler ────────────────────────────────────────────────────
+  async function handleAnonymize() {
+    setIsAnonymizing(true);
+    setAnonymizeError(null);
+    try {
+      const res = await fetch(`/api/staff/people/${person.id}/anonymize`, {
+        method: 'PATCH',
+      });
+      if (res.status === 409) {
+        const json = (await res.json()) as { error?: { message?: string } };
+        throw new Error(json.error?.message ?? 'This record has already been anonymized');
+      }
+      if (!res.ok) {
+        const json = (await res.json()) as { error?: { message?: string } };
+        throw new Error(json.error?.message ?? 'Anonymization failed');
+      }
+      showToast('Record anonymized', 'success');
+      setShowAnonymizeDialog(false);
+      // Reload to show anonymized state
+      window.location.reload();
+    } catch (err) {
+      setAnonymizeError(err instanceof Error ? err.message : 'Anonymization failed');
+    } finally {
+      setIsAnonymizing(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
+      {/* Toast notification */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`rounded-md border p-3 text-sm ${
+            toast.type === 'success'
+              ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950 dark:text-green-200'
+              : 'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200'
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
+
       {/* Anonymized banner */}
       {isAnonymized && (
         <div
@@ -119,7 +281,7 @@ export function PersonDetail({ person }: PersonDetailProps) {
 
           {/* Action buttons — hidden for anonymized records */}
           {!isAnonymized && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 href={`/staff/people/${person.id}/edit`}
                 className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm hover:bg-accent"
@@ -137,22 +299,24 @@ export function PersonDetail({ person }: PersonDetailProps) {
                 <Flag size={14} aria-hidden="true" />
                 Flag as Duplicate
               </button>
-              <Link
-                href={`/staff/people/${person.id}/merge`}
-                className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent"
+              <button
+                type="button"
+                onClick={() => setShowMergeDialog(true)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm hover:bg-accent"
                 data-testid="merge-btn"
               >
                 <Merge size={14} aria-hidden="true" />
                 Merge with…
-              </Link>
-              <Link
-                href={`/staff/people/${person.id}/anonymize`}
-                className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent"
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowAnonymizeDialog(true)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-sm text-destructive hover:bg-destructive/10"
                 data-testid="anonymize-btn"
               >
                 <ShieldOff size={14} aria-hidden="true" />
                 Anonymize Record
-              </Link>
+              </button>
             </div>
           )}
         </div>
@@ -200,7 +364,7 @@ export function PersonDetail({ person }: PersonDetailProps) {
         </div>
       )}
 
-      {/* Flag as Duplicate dialog */}
+      {/* ─── Flag as Duplicate dialog ─────────────────────────────────────── */}
       {showFlagDialog && (
         <div
           role="dialog"
@@ -245,6 +409,204 @@ export function PersonDetail({ person }: PersonDetailProps) {
                 className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
               >
                 {isFlagging ? 'Saving…' : 'Save Flag'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Merge dialog ─────────────────────────────────────────────────── */}
+      {showMergeDialog && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="merge-dialog-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          data-testid="merge-dialog"
+        >
+          <div className="w-full max-w-lg rounded-lg bg-background p-6 shadow-lg">
+            <div className="flex items-start justify-between gap-4">
+              <h3 id="merge-dialog-title" className="text-lg font-semibold">
+                Merge {person.display_name}
+              </h3>
+              <button
+                type="button"
+                onClick={closeMergeDialog}
+                aria-label="Close merge dialog"
+                className="rounded-md p-1 hover:bg-accent"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {!showMergeConfirm ? (
+              <>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Search for the person to merge into. All linked tickets will be transferred to the
+                  selected person.
+                </p>
+                <div className="relative mt-3">
+                  <Search size={15} className="absolute left-3 top-2.5 text-muted-foreground" aria-hidden="true" />
+                  <input
+                    type="search"
+                    value={mergeSearchQuery}
+                    onChange={(e) => handleMergeSearchChange(e.target.value)}
+                    placeholder="Search by name, email, or phone…"
+                    aria-label="Search for merge target"
+                    data-testid="merge-search-input"
+                    className="w-full rounded-md border border-input bg-background py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+
+                {mergeSearchLoading && (
+                  <p className="mt-2 text-sm text-muted-foreground">Searching…</p>
+                )}
+
+                {!mergeSearchLoading && mergeSearchResults.length > 0 && (
+                  <ul
+                    role="listbox"
+                    aria-label="Search results"
+                    className="mt-2 max-h-48 overflow-y-auto rounded-md border border-input"
+                  >
+                    {mergeSearchResults.map((result) => (
+                      <li key={result.id}>
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected="false"
+                          onClick={() => selectMergeTarget(result)}
+                          data-testid={`merge-target-${result.id}`}
+                          className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-accent"
+                        >
+                          <span>
+                            <span className="font-medium">{result.name ?? 'Unnamed'}</span>
+                            {result.email && (
+                              <span className="ml-2 text-muted-foreground">{result.email}</span>
+                            )}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {result.ticket_count} ticket{result.ticket_count === 1 ? '' : 's'}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {!mergeSearchLoading && mergeSearchQuery.trim() && mergeSearchResults.length === 0 && (
+                  <p className="mt-2 text-sm text-muted-foreground">No matching persons found.</p>
+                )}
+
+                {mergeError && (
+                  <p role="alert" className="mt-2 text-sm text-destructive">
+                    {mergeError}
+                  </p>
+                )}
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={closeMergeDialog}
+                    className="inline-flex h-9 items-center rounded-md border border-input bg-background px-4 text-sm hover:bg-accent"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* Merge confirmation step */
+              <>
+                <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                  <p className="font-medium">Confirm merge — this cannot be undone</p>
+                  <p className="mt-1">
+                    Merge{' '}
+                    <strong>{person.display_name}</strong> into{' '}
+                    <strong>{selectedMergeTarget?.name ?? 'Unnamed'}</strong>?
+                    All linked tickets will be transferred to {selectedMergeTarget?.name ?? 'the target person'}.
+                    This cannot be undone.
+                  </p>
+                </div>
+
+                {mergeError && (
+                  <p role="alert" className="mt-2 text-sm text-destructive">
+                    {mergeError}
+                  </p>
+                )}
+
+                <div className="mt-4 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => { setShowMergeConfirm(false); setMergeError(null); }}
+                    className="inline-flex h-9 items-center rounded-md border border-input bg-background px-4 text-sm hover:bg-accent"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleMergeConfirm}
+                    disabled={isMerging}
+                    data-testid="confirm-merge-btn"
+                    className="inline-flex h-9 items-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 disabled:pointer-events-none disabled:opacity-50"
+                  >
+                    {isMerging ? 'Merging…' : 'Confirm Merge'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ─── Anonymize AlertDialog ────────────────────────────────────────── */}
+      {showAnonymizeDialog && (
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="anonymize-dialog-title"
+          aria-describedby="anonymize-dialog-desc"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          data-testid="anonymize-dialog"
+        >
+          <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <ShieldOff size={20} className="text-destructive" aria-hidden="true" />
+              </div>
+              <h3 id="anonymize-dialog-title" className="text-lg font-semibold">
+                Anonymize Record
+              </h3>
+            </div>
+            <p id="anonymize-dialog-desc" className="mt-3 text-sm text-muted-foreground">
+              All personal information will be permanently removed. This action cannot be undone.
+            </p>
+            <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+              <li>• Name, email, phone, and notes will be erased</li>
+              <li>• Ticket links will be preserved (anonymized contact)</li>
+              <li>• This complies with GDPR erasure requests</li>
+            </ul>
+
+            {anonymizeError && (
+              <p role="alert" className="mt-3 text-sm text-destructive">
+                {anonymizeError}
+              </p>
+            )}
+
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => { setShowAnonymizeDialog(false); setAnonymizeError(null); }}
+                className="inline-flex h-9 items-center rounded-md border border-input bg-background px-4 text-sm hover:bg-accent"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAnonymize}
+                disabled={isAnonymizing}
+                data-testid="confirm-anonymize-btn"
+                className="inline-flex h-9 items-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 disabled:pointer-events-none disabled:opacity-50"
+              >
+                {isAnonymizing ? 'Anonymizing…' : 'Anonymize Record'}
               </button>
             </div>
           </div>
