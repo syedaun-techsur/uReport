@@ -3,15 +3,15 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-07-08T20:17:07.003Z"
-last_activity: "2026-07-08 — 04-01 complete: Open311 library layer built and tested"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-07-09T00:00:00.000Z"
+last_activity: "2026-07-09 — 06-03 complete: CRM people module — search, CRUD, link/unlink, staff pages, E2E tests"
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 26
-  completed_plans: 22
-  percent: 94
+  completed_plans: 23
+  percent: 96
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-06)
 
 **Core value:** City constituents can report municipal issues and staff can manage the full ticket lifecycle — all from one responsive, accessible web app running as a single Kubernetes pod with a Postgres sidecar.
-**Current focus:** Phase 4 — Open311 GeoReport v2 API
+**Current focus:** Phase 6 — Admin Panel + CRM
 
 ## Current Position
 
-Phase: 4 of 7 (Open311 GeoReport v2 API) — IN PROGRESS
-Plan: 1 of 1 completed (04-01 done; 04-02 next)
-Status: Phase 4 Plan 1 complete — Open311 types, Zod schemas, rate limiter, field mapper, XML serializer, API key verifier + 28 Vitest tests all passing
-Last activity: 2026-07-08 — 04-01 complete: Open311 library layer built and tested
+Phase: 6 of 7 (Admin Panel + CRM) — IN PROGRESS
+Plan: 3 of N completed (06-03 done; 06-04 next — merge + anonymize)
+Status: Phase 6 Plan 3 complete — CRM people module: Postgres FTS search, CRUD, link/unlink, 4 staff pages, 3 UI components, 6 E2E tests
+Last activity: 2026-07-09 — 06-03 complete: CRM people module built
 
-Progress: [█████████░] 94%
+Progress: [█████████░] 96%
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Progress: [█████████░] 94%
 | Phase 05-staff-ticket-console P02 | 3min | 2 tasks | 5 files |
 | Phase 05-staff-ticket-console P03 | 2min | 2 tasks | 7 files |
 | Phase 05-staff-ticket-console P04 | 5min | 2 tasks | 9 files |
+| Phase 06-admin-panel-crm P03 | 8min | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -117,6 +118,9 @@ Recent decisions affecting current work:
 - [Phase 05-staff-ticket-console]: MiniMap split into MiniMap.tsx wrapper + _MiniMapInner.tsx — dynamic(ssr:false) must wrap the file importing Leaflet
 - [Phase 05-staff-ticket-console]: Staff detail page as client component using useEffect fetch — MiniMap requires use client context
 - [Phase 05-staff-ticket-console]: prisma.$transaction interactive form for media route — storeMedia needs tx client; cast as Parameters<typeof storeMedia>[0]
+- [Phase 06-admin-panel-crm]: Server+client split for edit page — server fetches person, _EditPersonClient handles form/redirect (avoids self-fetch cookie issues)
+- [Phase 06-admin-panel-crm]: CRM-05 duplicate flag pragmatic impl — PATCH person.notes prepending "DUPLICATE FLAG: {note}" (no separate DB field in v1)
+- [Phase 06-admin-panel-crm]: Anonymized persons masked at API layer — name/email/phone/notes returned as null; display_name='Anonymous Constituent' added to response
 
 ### Pending Todos
 
@@ -128,6 +132,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-08T20:09:43.215Z
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-07-09T00:00:00.000Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None
