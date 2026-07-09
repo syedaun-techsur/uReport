@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 06-03-PLAN.md
-last_updated: "2026-07-09T00:00:00.000Z"
-last_activity: "2026-07-09 — 06-03 complete: CRM people module — search, CRUD, link/unlink, staff pages, E2E tests"
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-07-09T03:44:00.000Z"
+last_activity: "2026-07-09 — 06-02 complete: admin user management + API key lifecycle + audit log viewer"
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 26
-  completed_plans: 23
+  completed_plans: 24
   percent: 96
 ---
 
@@ -72,6 +72,7 @@ Progress: [█████████░] 96%
 | Phase 05-staff-ticket-console P04 | 5min | 2 tasks | 9 files |
 | Phase 06-admin-panel-crm P01 | 8min | 2 tasks | 20 files |
 | Phase 06-admin-panel-crm P03 | 8min | 2 tasks | 14 files |
+| Phase 06-admin-panel-crm P02 | 15min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,9 @@ Recent decisions affecting current work:
 - [Phase 06-admin-panel-crm]: Server+client split for edit page — server fetches person, _EditPersonClient handles form/redirect (avoids self-fetch cookie issues)
 - [Phase 06-admin-panel-crm]: CRM-05 duplicate flag pragmatic impl — PATCH person.notes prepending "DUPLICATE FLAG: {note}" (no separate DB field in v1)
 - [Phase 06-admin-panel-crm]: Anonymized persons masked at API layer — name/email/phone/notes returned as null; display_name='Anonymous Constituent' added to response
+- [Phase 06-admin-panel-crm P02]: GET /api/admin/me added for frontend self-identification — needed by admin users page to disable deactivate-self button
+- [Phase 06-admin-panel-crm P02]: Interactive prisma.$transaction for create user + generate API key — sequential form cannot reference new record ID in audit log
+- [Phase 06-admin-panel-crm P02]: Admin login redirects to /staff/tickets first — admin users navigate to /admin via URL; no separate admin-only landing needed
 
 ### Pending Todos
 
@@ -137,6 +141,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-09T03:43:45Z
-Stopped at: Completed 06-01-PLAN.md (also 06-03 previously completed)
+Last session: 2026-07-09T03:44:00Z
+Stopped at: Completed 06-02-PLAN.md
 Resume file: None
