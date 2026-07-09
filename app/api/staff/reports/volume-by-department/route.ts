@@ -23,17 +23,22 @@ export async function GET(req: NextRequest) {
   const { interval } = parsed.data;
   const { startDate, endDate } = resolveDateRange(parsed.data.start_date, parsed.data.end_date);
   const trunc = interval as 'day' | 'week' | 'month';
+  // Embed the interval as a SQL literal, not a bound parameter — otherwise the
+  // two ${trunc} placeholders differ ($1 vs $N) and Postgres rejects the
+  // GROUP BY with 42803. Same Prisma.raw fragment in SELECT + GROUP BY yields
+  // identical SQL. Safe: `interval` is a validated z.enum.
+  const periodExpr = Prisma.raw(`date_trunc('${trunc}', t.created_at)`);
 
   const rows = await prisma.$queryRaw<Array<{ period: Date; id: string; name: string; count: bigint }>>`
     SELECT
-      date_trunc(${trunc}, t.created_at)        AS period,
+      ${periodExpr}                              AS period,
       COALESCE(d.id, 'unassigned')               AS id,
       COALESCE(d.name, '(Unassigned)')           AS name,
       COUNT(*)::bigint                           AS count
     FROM "Ticket" t
     LEFT JOIN "Department" d ON t.department_id = d.id
     WHERE t.created_at >= ${startDate} AND t.created_at <= ${endDate}
-    GROUP BY date_trunc(${trunc}, t.created_at), d.id, d.name
+    GROUP BY ${periodExpr}, d.id, d.name
     ORDER BY period ASC, name ASC
   `;
 

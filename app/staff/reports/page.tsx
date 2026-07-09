@@ -5,9 +5,7 @@ import SummaryCards from '@/components/reports/SummaryCards';
 import VolumeChart from '@/components/reports/VolumeChart';
 import StatusBreakdown from '@/components/reports/StatusBreakdown';
 import ResolutionTimeChart from '@/components/reports/ResolutionTimeChart';
-import dynamic from 'next/dynamic';
-
-const DensityMap = dynamic(() => import('@/components/reports/DensityMap'), { ssr: false });
+import DensityMap from '@/components/reports/DensityMapWrapper';
 
 interface ReportsPageProps {
   searchParams: Promise<{ preset?: string; startDate?: string; endDate?: string }>;

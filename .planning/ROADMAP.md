@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Open311 GeoReport v2 API** - All five endpoints (services + requests), JSON+XML, API-key auth, pagination headers
 - [x] **Phase 5: Staff Ticket Console** - Filterable/searchable queue, saved Bookmarks, ticket detail with history timeline, status changes, responses, media gallery
 - [x] **Phase 6: Admin Panel & CRM** - Full admin back-office (categories, departments, substatuses, templates, users, API keys, audit log), People management with search and merge
-- [ ] **Phase 7: Reports & Metrics Dashboard** - Volume charts, open/closed breakdown, avg resolution time, geographic heat/cluster map
+- [x] **Phase 7: Reports & Metrics Dashboard** - Volume charts, open/closed breakdown, avg resolution time, geographic heat/cluster map
 
 ## Phase Details
 
@@ -138,7 +138,8 @@ Plans:
 - [x] 06-04-PLAN.md — CRM merge persons (re-point all TicketPerson rows in transaction), anonymize (GDPR: null PII + set anonymized_at + TicketHistory)
 
 ### Phase 7: Reports & Metrics Dashboard
-**Status**: executing
+**Status**: Complete
+**Completed**: 2026-07-09
 **Goal**: Authenticated staff and admins can view a metrics dashboard showing ticket volume by category and department, open/closed breakdown with average resolution time, and a geographic density map — all over a configurable date range
 **Depends on**: Phase 5 (ticket data exists), Phase 2 (auth)
 **Requirements**: RPT-01, RPT-02, RPT-03, RPT-04
@@ -166,4 +167,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Open311 GeoReport v2 API | 2/2 | Complete | 2026-07-09 |
 | 5. Staff Ticket Console | 4/4 | Complete | 2026-07-09 |
 | 6. Admin Panel & CRM | 4/4 | Complete | 2026-07-09 |
-| 7. Reports & Metrics Dashboard | 0/2 | Not started | - |
+| 7. Reports & Metrics Dashboard | 2/2 | Complete | 2026-07-09 |

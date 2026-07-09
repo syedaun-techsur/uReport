@@ -23,17 +23,24 @@ export async function GET(req: NextRequest) {
   const { interval } = parsed.data;
   const { startDate, endDate } = resolveDateRange(parsed.data.start_date, parsed.data.end_date);
   const trunc = interval as 'day' | 'week' | 'month';
+  // Embed the interval as a SQL literal (not a bound parameter). Interpolating
+  // ${trunc} as a $queryRaw value emits a placeholder ($1 in SELECT, $N in
+  // GROUP BY); Postgres then treats date_trunc($1,col) and date_trunc($N,col)
+  // as non-equivalent expressions and rejects with 42803 ("must appear in the
+  // GROUP BY clause"). Using the same Prisma.raw fragment in both spots yields
+  // identical SQL. Safe from injection: `interval` is a validated z.enum.
+  const periodExpr = Prisma.raw(`date_trunc('${trunc}', t.created_at)`);
 
   const rows = await prisma.$queryRaw<Array<{ period: Date; id: string; name: string; count: bigint }>>`
     SELECT
-      date_trunc(${trunc}, t.created_at) AS period,
-      c.id                               AS id,
-      c.name                             AS name,
-      COUNT(*)::bigint                   AS count
+      ${periodExpr} AS period,
+      c.id          AS id,
+      c.name        AS name,
+      COUNT(*)::bigint AS count
     FROM "Ticket" t
     JOIN "Category" c ON t.category_id = c.id
     WHERE t.created_at >= ${startDate} AND t.created_at <= ${endDate}
-    GROUP BY date_trunc(${trunc}, t.created_at), c.id, c.name
+    GROUP BY ${periodExpr}, c.id, c.name
     ORDER BY period ASC, name ASC
   `;
 
