@@ -1,6 +1,15 @@
 // schemas/admin.ts
 import { z } from 'zod';
 
+// Optional fields backed by <select>/<input> controls arrive as an empty string
+// ("") when left blank, not as undefined. Bare `.cuid()`/`.regex().optional()`
+// then rejects "" (it's a string, so `.optional()` doesn't apply), which blocks
+// form submission for genuinely-optional fields. Coerce "" -> null first.
+const emptyToNull = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (v === '' ? null : v), schema);
+
+const optionalCuid = () => emptyToNull(z.string().cuid().nullable().optional());
+
 // ─── Category ────────────────────────────────────────────────────────────────
 
 export const CreateCategorySchema = z.object({
@@ -12,15 +21,17 @@ export const CreateCategorySchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),
   icon: z.string().max(100).optional(),
-  color: z
-    .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be #RRGGBB')
-    .optional()
-    .nullable(),
+  color: emptyToNull(
+    z
+      .string()
+      .regex(/^#[0-9A-Fa-f]{6}$/, 'Must be #RRGGBB')
+      .nullable()
+      .optional(),
+  ),
   anon_allowed: z.boolean().default(true),
   active: z.boolean().default(true),
-  group_id: z.string().cuid().optional().nullable(),
-  department_id: z.string().cuid().optional().nullable(),
+  group_id: optionalCuid(),
+  department_id: optionalCuid(),
   // sla_hours: NOT in Prisma schema — kept in Zod for API compat, silently ignored in DB writes
   sla_hours: z.number().int().positive().optional().nullable(),
 });
@@ -34,7 +45,7 @@ export type UpdateCategoryInput = z.infer<typeof UpdateCategorySchema>;
 
 export const CreateDepartmentSchema = z.object({
   name: z.string().min(1).max(200),
-  default_assignee_id: z.string().cuid().optional().nullable(),
+  default_assignee_id: optionalCuid(),
   active: z.boolean().default(true),
 });
 
@@ -76,8 +87,8 @@ export type ReorderSubstatusInput = z.infer<typeof ReorderSubstatusSchema>;
 export const CreateTemplateSchema = z.object({
   name: z.string().min(1).max(200),
   body: z.string().min(1).max(10000),
-  category_id: z.string().cuid().optional().nullable(),
-  department_id: z.string().cuid().optional().nullable(),
+  category_id: optionalCuid(),
+  department_id: optionalCuid(),
   active: z.boolean().default(true),
 });
 
