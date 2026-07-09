@@ -21,7 +21,9 @@ const columns = [
     header: 'Reference',
     cell: (info) => (
       <Link
-        href={`/staff/tickets/${info.getValue()}`}
+        // Link by primary id (ticket_id); the detail page + all /api/staff/tickets/[id]
+        // routes look up by id, not reference_id. The reference_id stays as the label.
+        href={`/staff/tickets/${info.row.original.ticket_id}`}
         className="font-mono text-xs text-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {info.getValue()}

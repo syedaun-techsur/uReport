@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+/*
+ * shadcn/ui design tokens (neutral/zinc, light theme).
+ * Defined in @theme so Tailwind v4 generates the semantic color utilities
+ * (bg-background, text-muted-foreground, border-input, bg-primary, …) that
+ * the staff console components rely on. @theme EXTENDS the default palette,
+ * so plain utilities (bg-gray-100, bg-green-100, …) keep working too.
+ * Light-only: the app uses no dark: variants, so no dark override is defined
+ * (an earlier prefers-color-scheme block was the cause of the unstyled UI).
+ */
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #09090b;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #09090b;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #09090b;
+
+  --color-primary: #18181b;
+  --color-primary-foreground: #fafafa;
+
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #18181b;
+
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+
+  --color-accent: #f4f4f5;
+  --color-accent-foreground: #18181b;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #fafafa;
+
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+  --color-ring: #18181b;
+
+  --radius: 0.5rem;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
