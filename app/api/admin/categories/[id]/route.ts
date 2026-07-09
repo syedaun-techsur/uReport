@@ -79,7 +79,7 @@ export async function PATCH(
         action,
         resource_type: 'Category',
         resource_id: id,
-        metadata,
+        metadata: metadata as object,
       },
     });
     return cat;

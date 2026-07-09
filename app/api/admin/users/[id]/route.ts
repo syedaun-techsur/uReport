@@ -98,7 +98,7 @@ export async function PATCH(
         action,
         resource_type: 'User',
         resource_id: id,
-        metadata: changedFields,
+        metadata: changedFields as object,
       },
     });
 
