@@ -13,11 +13,11 @@ uReport NG is built in seven phases that follow a strict dependency chain: the K
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: K8s Scaffold & Data Foundation** - Next.js 15 app running on port 3000, infrastructure.json, health endpoints, complete Prisma schema with FTS/PostGIS, seed data
-- [ ] **Phase 2: Authentication & Sessions** - Auth.js credentials login, role-based sessions (public/staff/admin), route guards
-- [ ] **Phase 3: Public Portal & Constituent Tracking** - Map-first issue submission, photo upload, confirmation, public ticket lookup, clustered public map
-- [ ] **Phase 4: Open311 GeoReport v2 API** - All five endpoints (services + requests), JSON+XML, API-key auth, pagination headers
-- [ ] **Phase 5: Staff Ticket Console** - Filterable/searchable queue, saved Bookmarks, ticket detail with history timeline, status changes, responses, media gallery
-- [ ] **Phase 6: Admin Panel & CRM** - Full admin back-office (categories, departments, substatuses, templates, users, API keys, audit log), People management with search and merge
+- [x] **Phase 2: Authentication & Sessions** - Auth.js credentials login, role-based sessions (public/staff/admin), route guards
+- [x] **Phase 3: Public Portal & Constituent Tracking** - Map-first issue submission, photo upload, confirmation, public ticket lookup, clustered public map
+- [x] **Phase 4: Open311 GeoReport v2 API** - All five endpoints (services + requests), JSON+XML, API-key auth, pagination headers
+- [x] **Phase 5: Staff Ticket Console** - Filterable/searchable queue, saved Bookmarks, ticket detail with history timeline, status changes, responses, media gallery
+- [x] **Phase 6: Admin Panel & CRM** - Full admin back-office (categories, departments, substatuses, templates, users, API keys, audit log), People management with search and merge
 - [ ] **Phase 7: Reports & Metrics Dashboard** - Volume charts, open/closed breakdown, avg resolution time, geographic heat/cluster map
 
 ## Phase Details
@@ -118,7 +118,8 @@ Plans:
 - [ ] 05-04-PLAN.md — Mutations (PATCH status/assign, POST responses, POST media) + ResponseComposer + MediaGallery upload + GET /api/staff/users + GET /api/staff/response-templates + Playwright E2E
 
 ### Phase 6: Admin Panel & CRM
-**Status**: In Progress
+**Status**: Complete
+**Completed**: 2026-07-09
 **Goal**: Admins can configure all system reference data (categories, departments, substatuses, response templates, users, API keys) through a back-office UI with a full audit log; staff can search, view, link, and manage constituent Person records
 **Depends on**: Phase 2 (auth/admin role), Phase 5 (staff console foundation for Person–Ticket linking)
 **Requirements**: CRM-01, CRM-02, CRM-03, CRM-04, CRM-05, ADMIN-01, ADMIN-02, ADMIN-03, ADMIN-04, ADMIN-05, ADMIN-06, ADMIN-07, ADMIN-08
@@ -131,10 +132,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 06-01-PLAN.md — Admin reference data CRUD: Categories (with CategoryGroup from seed, anon_allowed), Departments, Substatuses, ResponseTemplates — all mutations log to AdminAuditLog
-- [ ] 06-02-PLAN.md — Admin user management (create, deactivate, reset password + token_version), API key management (SHA-256, plaintext once, revoke), AdminAuditLog viewer
-- [ ] 06-03-PLAN.md — CRM Person search (FTS), detail + ticket history, create/edit, link/unlink to ticket (TicketPerson + TicketHistory), duplicate flag
-- [ ] 06-04-PLAN.md — CRM merge persons (re-point all TicketPerson rows in transaction), anonymize (GDPR: null PII + set anonymized_at + TicketHistory)
+- [x] 06-01-PLAN.md — Admin reference data CRUD: Categories (with CategoryGroup from seed, anon_allowed), Departments, Substatuses, ResponseTemplates — all mutations log to AdminAuditLog
+- [x] 06-02-PLAN.md — Admin user management (create, deactivate, reset password + token_version), API key management (SHA-256, plaintext once, revoke), AdminAuditLog viewer
+- [x] 06-03-PLAN.md — CRM Person search (FTS), detail + ticket history, create/edit, link/unlink to ticket (TicketPerson + TicketHistory), duplicate flag
+- [x] 06-04-PLAN.md — CRM merge persons (re-point all TicketPerson rows in transaction), anonymize (GDPR: null PII + set anonymized_at + TicketHistory)
 
 ### Phase 7: Reports & Metrics Dashboard
 **Goal**: Authenticated staff and admins can view a metrics dashboard showing ticket volume by category and department, open/closed breakdown with average resolution time, and a geographic density map — all over a configurable date range
@@ -159,9 +160,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. K8s Scaffold & Data Foundation | 3/3 | Complete | 2026-07-07 |
-| 2. Authentication & Sessions | 0/2 | Not started | - |
-| 3. Public Portal & Constituent Tracking | 0/3 | Not started | - |
-| 4. Open311 GeoReport v2 API | 0/2 | Not started | - |
-| 5. Staff Ticket Console | 0/4 | Not started | - |
-| 6. Admin Panel & CRM | 0/4 | Not started | - |
+| 2. Authentication & Sessions | 8/8 | Complete | 2026-07-09 |
+| 3. Public Portal & Constituent Tracking | 5/5 | Complete | 2026-07-09 |
+| 4. Open311 GeoReport v2 API | 2/2 | Complete | 2026-07-09 |
+| 5. Staff Ticket Console | 4/4 | Complete | 2026-07-09 |
+| 6. Admin Panel & CRM | 4/4 | Complete | 2026-07-09 |
 | 7. Reports & Metrics Dashboard | 0/2 | Not started | - |
