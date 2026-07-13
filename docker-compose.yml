@@ -1,0 +1,34 @@
+# uReport NG — application infrastructure (Pivota "one compose contract").
+#
+# Since the DinD/sysbox migration the platform runs every sandbox with a working
+# Docker daemon and injects NO database (no DATABASE_URL, no sidecar). The app
+# self-provides its datastore here — this file IS the infrastructure spec.
+#
+# The Next.js app itself runs natively via the platform dev wrapper
+# (`next dev`). On boot, scripts/ensure-database.js (invoked from the
+# predev/prestart hooks) brings this `db` service up, waits for it to be
+# healthy, injects DATABASE_URL, and then migrate + seed run before the app
+# serves its first request — so the preview is never a login screen nobody can
+# log into.
+#
+# The original PHP uReport stack is preserved for reference in
+# docker-compose.legacy.yml (see runtime-environment.md §5).
+services:
+  db:
+    image: postgres:16               # PIN the version → hits the sandbox image's preseed cache
+    environment:
+      POSTGRES_USER: ureport
+      POSTGRES_PASSWORD: ureport_dev_pw   # local/preview throwaway; DB binds the sandbox loopback only
+      POSTGRES_DB: ureport
+    ports:
+      - "5432:5432"                  # published on the sandbox loopback for the native app + migrate/seed
+    volumes:
+      - ureport-db-data:/var/lib/postgresql/data   # named volume → data persists across app restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ureport -d ureport"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  ureport-db-data:

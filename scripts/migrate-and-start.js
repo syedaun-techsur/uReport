@@ -1,6 +1,7 @@
 // scripts/migrate-and-start.js
 const { execSync, spawn } = require('child_process');
 const { Client } = require('pg');
+const { ensureDatabase } = require('./ensure-database');
 
 const MAX_RETRIES = 12;
 const RETRY_DELAY_BASE_MS = 2000;
@@ -40,6 +41,11 @@ async function detectGeoMode() {
 }
 
 async function main() {
+  // 0. Pivota DinD contract: self-provide the DB via docker compose when the
+  //    platform injected none (sets + persists DATABASE_URL). No-op if a real
+  //    DATABASE_URL is already present (e.g. production).
+  await ensureDatabase();
+
   // 1. Validate required env vars
   for (const key of ['DATABASE_URL', 'AUTH_SECRET']) {
     if (!process.env[key]) { console.error(`[FATAL] Missing: ${key}`); process.exit(1); }
