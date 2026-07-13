@@ -19,6 +19,7 @@
 // failure is caught by the platform boot-smoke, not left silent).
 const { execSync } = require('child_process');
 const { Client } = require('pg');
+const { ensureDatabase } = require('./ensure-database');
 
 const MAX_RETRIES = 12;
 const RETRY_DELAY_BASE_MS = 2000;
@@ -43,8 +44,13 @@ async function waitForDb() {
 }
 
 async function main() {
+  // Pivota DinD contract: the platform injects no DATABASE_URL. If none is set,
+  // bring up the app's own compose "db" service and inject DATABASE_URL (also
+  // persisted to .env.local for the sibling `next dev` process).
+  await ensureDatabase();
+
   if (!process.env.DATABASE_URL) {
-    console.log('[dev-db-setup] DATABASE_URL not set — skipping migrate/seed (no platform DB injected; app owns its own DB).');
+    console.log('[dev-db-setup] DATABASE_URL not set and no compose DB available — skipping migrate/seed; the dev server will still start (DB-backed routes will error until a DB is reachable).');
     return;
   }
 
