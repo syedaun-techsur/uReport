@@ -139,7 +139,7 @@ Plans:
 - [x] 06-04-PLAN.md — CRM merge persons (re-point all TicketPerson rows in transaction), anonymize (GDPR: null PII + set anonymized_at + TicketHistory)
 
 ### Phase 7: Reports & Metrics Dashboard
-**Status**: executing
+**Status**: failed
 **Completed**: 2026-07-09
 **Goal**: Authenticated staff and admins can view a metrics dashboard showing ticket volume by category and department, open/closed breakdown with average resolution time, and a geographic density map — all over a configurable date range
 **Depends on**: Phase 5 (ticket data exists), Phase 2 (auth)
