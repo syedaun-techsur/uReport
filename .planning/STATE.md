@@ -2,15 +2,15 @@
 pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: complete
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-07-09T05:30:00.000Z"
-last_activity: "2026-07-09 — Phase 7 complete: Reports & Metrics Dashboard (2/2 plans done)"
+status: completed
+stopped_at: Completed 07-01-PLAN.md (retroactive SUMMARY creation + Prisma v6 bug fix)
+last_updated: "2026-07-21T20:20:03.228Z"
+last_activity: "2026-07-09 — Phase 7 complete: 2 plans, Reports & Metrics Dashboard"
 progress:
   total_phases: 7
-  completed_phases: 7
-  total_plans: 28
-  completed_plans: 28
+  completed_phases: 6
+  total_plans: 29
+  completed_plans: 27
   percent: 100
 ---
 
@@ -76,6 +76,7 @@ Progress: [██████████] 100%
 | Phase 06-admin-panel-crm P04 | 8min | 2 tasks | 4 files |
 | Phase 07-reports-metrics-dashboard P01 | 6min | 2 tasks | 9 files |
 | Phase 07-reports-metrics-dashboard P02 | 8min | 2 tasks | 11 files |
+| Phase 07-reports-metrics-dashboard P01 | 10min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -143,6 +144,7 @@ Recent decisions affecting current work:
 - [Phase 07-reports-metrics-dashboard P02]: DensityMap wrapped dynamic(ssr:false) in page.tsx — Leaflet accesses window at init; SSR would throw
 - [Phase 07-reports-metrics-dashboard P02]: escapeHtml() in DensityMap popup — constituent-supplied address_snippet treated as untrusted (T-07-10)
 - [Phase 07-reports-metrics-dashboard P02]: components/ui/button + card + lib/utils.ts created — no shadcn components existed; Rule 3 auto-fix for TS2307 blocking errors
+- [Phase 07-reports-metrics-dashboard]: Prisma v6 API surface: raw/sqltag/Sql/empty imported from @prisma/client/runtime/library (not Prisma namespace)
 
 ### Pending Todos
 
@@ -154,6 +156,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-09T04:15:00Z
-Stopped at: Completed 07-02-PLAN.md (Phase 7 final plan — v1 complete)
+Last session: 2026-07-21T20:19:56.054Z
+Stopped at: Completed 07-01-PLAN.md (retroactive SUMMARY creation + Prisma v6 bug fix)
 Resume file: None
