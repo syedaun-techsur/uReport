@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { requireSession } from '@/lib/api-response';
 import { GeoDensityQuerySchema } from '@/schemas/reports';
 import { resolveDateRange } from '@/lib/reports';
-import { Prisma } from '@prisma/client';
+import { Sql, sqltag as sql, empty } from '@prisma/client/runtime/library';
 
 export async function GET(req: NextRequest) {
   const sessionOrError = await requireSession('staff');
@@ -23,15 +23,15 @@ export async function GET(req: NextRequest) {
   const { status } = parsed.data;
   const { startDate, endDate } = resolveDateRange(parsed.data.start_date, parsed.data.end_date);
 
-  // Build status IN clause — use Prisma.sql with safe enum list (NOT user input)
+  // Build status IN clause — use sql with safe enum list (NOT user input)
   // status param already validated by Zod to be 'open' | 'closed' | 'all'
-  let statusFilter: Prisma.Sql;
+  let statusFilter: Sql;
   if (status === 'open') {
-    statusFilter = Prisma.sql`AND t.status IN ('open', 'in_progress')`;
+    statusFilter = sql`AND t.status IN ('open', 'in_progress')`;
   } else if (status === 'closed') {
-    statusFilter = Prisma.sql`AND t.status IN ('closed', 'archived')`;
+    statusFilter = sql`AND t.status IN ('closed', 'archived')`;
   } else {
-    statusFilter = Prisma.sql``;  // all — no filter
+    statusFilter = empty;  // all — no filter
   }
 
   const tickets = await prisma.$queryRaw<Array<{
@@ -59,9 +59,10 @@ export async function GET(req: NextRequest) {
     LIMIT 5000
   `;
 
+  type TicketRow = { id: string; status: string; category_name: string; address: string; lat: number; lng: number };
   const featureCollection = {
     type: 'FeatureCollection' as const,
-    features: tickets.map(t => ({
+    features: tickets.map((t: TicketRow) => ({
       type: 'Feature' as const,
       geometry: {
         type: 'Point' as const,

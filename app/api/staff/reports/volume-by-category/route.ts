@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { requireSession } from '@/lib/api-response';
 import { VolumeQuerySchema } from '@/schemas/reports';
 import { resolveDateRange, shapeVolumeRows } from '@/lib/reports';
-import { Prisma } from '@prisma/client';
+import { raw } from '@prisma/client/runtime/library';
 
 export async function GET(req: NextRequest) {
   const sessionOrError = await requireSession('staff');
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   // as non-equivalent expressions and rejects with 42803 ("must appear in the
   // GROUP BY clause"). Using the same Prisma.raw fragment in both spots yields
   // identical SQL. Safe from injection: `interval` is a validated z.enum.
-  const periodExpr = Prisma.raw(`date_trunc('${trunc}', t.created_at)`);
+  const periodExpr = raw(`date_trunc('${trunc}', t.created_at)`);
 
   const rows = await prisma.$queryRaw<Array<{ period: Date; id: string; name: string; count: bigint }>>`
     SELECT
