@@ -33,7 +33,16 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Reports &amp; Metrics</h1>
-        <DateRangePicker currentPreset={preset} startDate={startISO} endDate={endISO} />
+        <div className="flex items-center gap-3">
+          <DateRangePicker currentPreset={preset} startDate={startISO} endDate={endISO} />
+          <a
+            href={`/api/staff/reports/export?start_date=${encodeURIComponent(startISO)}&end_date=${encodeURIComponent(endISO)}`}
+            className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted"
+            data-testid="export-csv"
+          >
+            Export CSV
+          </a>
+        </div>
       </div>
 
       <Suspense fallback={<div className="text-muted-foreground text-sm">Loading summary…</div>}>
