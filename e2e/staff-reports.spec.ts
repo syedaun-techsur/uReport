@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 // Helper: log in as staff
 async function loginAsStaff(page: import('@playwright/test').Page) {
   await page.goto('/login');
-  await page.fill('[name="identifier"], [name="username"], [name="email"]', 'staff@bloomington.gov');
+  await page.fill('[name="identifier"], [name="username"], [name="email"]', 'staff@bloomington.in.gov');
   await page.fill('[name="password"]', 'Staff1234!secure');
   await page.click('button[type="submit"]');
   await page.waitForURL('/staff/tickets', { timeout: 10_000 });
