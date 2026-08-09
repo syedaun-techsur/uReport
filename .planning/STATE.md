@@ -3,14 +3,14 @@ pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 07-01-PLAN.md (retroactive SUMMARY creation + Prisma v6 bug fix)
-last_updated: "2026-07-21T20:20:03.228Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-08-09T23:24:22.052Z"
 last_activity: "2026-07-09 — Phase 7 complete: 2 plans, Reports & Metrics Dashboard"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 29
-  completed_plans: 27
+  completed_plans: 28
   percent: 100
 ---
 
@@ -77,6 +77,7 @@ Progress: [██████████] 100%
 | Phase 07-reports-metrics-dashboard P01 | 6min | 2 tasks | 9 files |
 | Phase 07-reports-metrics-dashboard P02 | 8min | 2 tasks | 11 files |
 | Phase 07-reports-metrics-dashboard P01 | 10min | 2 tasks | 8 files |
+| Phase 07-reports-metrics-dashboard P02 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -145,6 +146,7 @@ Recent decisions affecting current work:
 - [Phase 07-reports-metrics-dashboard P02]: escapeHtml() in DensityMap popup — constituent-supplied address_snippet treated as untrusted (T-07-10)
 - [Phase 07-reports-metrics-dashboard P02]: components/ui/button + card + lib/utils.ts created — no shadcn components existed; Rule 3 auto-fix for TS2307 blocking errors
 - [Phase 07-reports-metrics-dashboard]: Prisma v6 API surface: raw/sqltag/Sql/empty imported from @prisma/client/runtime/library (not Prisma namespace)
+- [Phase 07-reports-metrics-dashboard]: DensityMapWrapper client component for ssr:false — Next.js 15 Turbopack disallows ssr:false in dynamic() when called from a Server Component; client-wrapper resolves constraint
 
 ### Pending Todos
 
@@ -156,6 +158,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-07-21T20:19:56.054Z
-Stopped at: Completed 07-01-PLAN.md (retroactive SUMMARY creation + Prisma v6 bug fix)
+Last session: 2026-08-09T23:24:22.050Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
